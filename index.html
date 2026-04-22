@@ -7,639 +7,264 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* General */
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f4f8;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f7; min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* Navbar */
-        .navbar {
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            padding: 1rem 2rem;
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: #1a1a2e !important;
-        }
-        .nav-link {
-            color: #555 !important;
-            font-weight: 500;
-            margin-left: 1.5rem;
-            padding-bottom: 4px !important;
-        }
-        .nav-link.active {
-            color: #2563eb !important;
-            border-bottom: 2px solid #2563eb;
-        }
+        /* NAVBAR */
+        .navbar { background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 0.9rem 2rem; position: sticky; top: 0; z-index: 100; }
+        .navbar-brand { font-size: 1.4rem; font-weight: 800; color: #1a1a2e !important; }
+        .nav-links { display: flex; align-items: center; gap: 0.5rem; }
+        .nav-btn { background: none; border: none; padding: 0.5rem 1rem; font-size: 0.95rem; font-weight: 500; color: #64748b; cursor: pointer; border-radius: 8px; transition: all 0.2s; position: relative; }
+        .nav-btn:hover { color: #2563eb; background: #eff6ff; }
+        .nav-btn.active { color: #2563eb; font-weight: 600; }
+        .nav-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 60%; height: 2px; background: #2563eb; border-radius: 2px; }
+        .nav-btn-logout { background: none; border: 1.5px solid #ef4444; color: #ef4444; padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-left: 0.5rem; transition: all 0.2s; }
+        .nav-btn-logout:hover { background: #fef2f2; }
 
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-        .card-header-gradient {
-            background: linear-gradient(135deg, #a8c8f8 0%, #6fa8f5 100%);
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            color: #1a3a6e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: none;
-        }
-        .card-header-gradient .badge-info {
-            background: rgba(255,255,255,0.3);
-            color: #1a3a6e;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .card-body {
-            padding: 1.5rem;
-            background: #fff;
-        }
+        /* CARDS */
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); overflow: hidden; margin-bottom: 1.5rem; border: none; }
+        .card-hdr { background: linear-gradient(135deg, #b8d9fa 0%, #7eb8f7 100%); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+        .card-hdr-title { font-weight: 600; font-size: 0.95rem; color: #1a3a6e; }
+        .card-hdr-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; color: #1a3a6e; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+        .card-body { padding: 1.5rem; background: #fff; }
 
-        /* Progress Bar */
-        .progress {
-            height: 10px;
-            border-radius: 10px;
-            background: #e2e8f0;
-            margin: 0.5rem 0;
-        }
-        .progress-bar {
-            background: linear-gradient(90deg, #3b82f6, #2563eb);
-            border-radius: 10px;
-        }
+        /* PROGRESS */
+        .prog-bar-wrap { background: #e2e8f0; border-radius: 99px; height: 10px; overflow: hidden; margin: 0.5rem 0; }
+        .prog-bar-fill { height: 100%; background: linear-gradient(90deg, #60a5fa, #2563eb); border-radius: 99px; transition: width 0.5s ease; }
 
-        /* Buttons */
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.6rem 1.4rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-primary-custom:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
-        }
+        /* BUTTONS */
+        .btn-blue { background: #2563eb; color: white; border: none; border-radius: 10px; padding: 0.65rem 1.4rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-blue:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .btn-sm-add { background: #2563eb; color: white; border: none; border-radius: 8px; padding: 0.35rem 0.85rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-sm-edit { background: #f59e0b; color: white; border: none; border-radius: 6px; padding: 0.3rem 0.65rem; font-size: 0.78rem; cursor: pointer; }
+        .btn-sm-del { background: #ef4444; color: white; border: none; border-radius: 6px; padding: 0.3rem 0.65rem; font-size: 0.78rem; cursor: pointer; }
 
-        /* Module items */
-        .module-item {
-            display: flex;
-            align-items: center;
-            padding: 0.85rem 0;
-            border-bottom: 1px solid #f0f4f8;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-radius: 8px;
-        }
-        .module-item:last-child { border-bottom: none; }
-        .module-item:hover { background: #f8faff; padding-left: 8px; }
-        .module-item .mod-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: #eff6ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: #2563eb;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-        .module-item .mod-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #334155;
-            flex: 1;
-        }
-        .module-item .mod-badge {
-            background: #e2e8f0;
-            color: #64748b;
-            border-radius: 20px;
-            padding: 2px 10px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .module-item .mod-badge.completed {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-        .module-item .mod-badge.in-progress {
-            background: #fef3c7;
-            color: #d97706;
-        }
+        /* MODULE ROWS */
+        .mod-row { display: flex; align-items: center; padding: 0.9rem 0.5rem; border-bottom: 1px solid #f1f5f9; cursor: pointer; border-radius: 8px; transition: background 0.15s; gap: 1rem; }
+        .mod-row:last-child { border-bottom: none; }
+        .mod-row:hover { background: #f8faff; }
+        .mod-icon-wrap { width: 38px; height: 38px; border-radius: 10px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 1.1rem; flex-shrink: 0; }
+        .mod-name { flex: 1; font-size: 0.9rem; font-weight: 500; color: #334155; }
+        .mod-pct-badge { background: transparent; border: 1.5px solid #cbd5e1; color: #64748b; border-radius: 99px; padding: 2px 12px; font-size: 0.8rem; font-weight: 600; min-width: 48px; text-align: center; }
+        .mod-pct-badge.done { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+        .mod-pct-badge.going { border-color: #f59e0b; color: #b45309; background: #fffbeb; }
 
-        /* Content items */
-        .content-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #f8faff;
-            border: 1px solid #e2e8f0;
-        }
-        .content-item:hover { background: #eff6ff; border-color: #bfdbfe; }
-        .content-item.completed { background: #f0fdf4; border-color: #bbf7d0; }
-        .content-item .ci-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: #dbeafe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.75rem;
-            color: #2563eb;
-            flex-shrink: 0;
-        }
-        .content-item.completed .ci-icon { background: #dcfce7; color: #16a34a; }
-        .content-item .ci-info { flex: 1; }
-        .content-item .ci-info h6 { margin: 0; font-size: 0.9rem; font-weight: 600; color: #1e293b; }
-        .content-item .ci-info small { color: #64748b; }
-        .content-item .ci-status { margin-left: auto; color: #94a3b8; }
-        .content-item.completed .ci-status { color: #16a34a; }
+        /* CONTENT ROWS */
+        .con-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; border-radius: 12px; border: 1.5px solid #e2e8f0; margin-bottom: 0.6rem; cursor: pointer; transition: all 0.2s; background: #f8faff; }
+        .con-row:hover { background: #eff6ff; border-color: #bfdbfe; }
+        .con-row.done { background: #f0fdf4; border-color: #bbf7d0; }
+        .con-icon { width: 36px; height: 36px; border-radius: 8px; background: #dbeafe; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0; }
+        .con-row.done .con-icon { background: #dcfce7; color: #16a34a; }
+        .con-info { flex: 1; }
+        .con-info h6 { margin: 0 0 2px; font-size: 0.88rem; font-weight: 600; color: #1e293b; }
+        .con-info small { color: #94a3b8; font-size: 0.78rem; }
+        .con-check { color: #94a3b8; font-size: 1rem; }
+        .con-row.done .con-check { color: #16a34a; }
 
-        /* Admin */
-        .admin-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            color: white;
-        }
+        /* LOGIN */
+        #loginSection { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #e0f2fe 100%); }
+        .login-box { background: white; border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(37,99,235,0.12); }
+        .login-box h2 { font-weight: 800; font-size: 1.8rem; color: #1e293b; margin-bottom: 0.3rem; }
+        .login-subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; }
+        .form-label { font-weight: 600; color: #374151; font-size: 0.875rem; margin-bottom: 0.4rem; display: block; }
+        .form-input { width: 100%; padding: 0.65rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; transition: border-color 0.2s; outline: none; }
+        .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .mb-form { margin-bottom: 1.2rem; }
+        .login-hint { margin-top: 1.2rem; padding: 0.75rem 1rem; background: #f8faff; border: 1px solid #dbeafe; border-radius: 10px; font-size: 0.78rem; color: #64748b; line-height: 1.6; }
 
-        /* Chatbot */
-        #chatbot-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(37,99,235,0.4);
-            z-index: 1000;
-            transition: transform 0.2s;
-        }
-        #chatbot-btn:hover { transform: scale(1.1); }
+        /* CHATBOT */
+        #cb-btn { position: fixed; bottom: 24px; right: 24px; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 20px rgba(37,99,235,0.4); z-index: 1000; border: none; transition: transform 0.2s; }
+        #cb-btn:hover { transform: scale(1.08); }
+        #cb-box { position: fixed; bottom: 88px; right: 24px; width: 340px; height: 440px; background: white; border-radius: 18px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; z-index: 999; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(12px) scale(0.97); transition: all 0.25s ease; }
+        #cb-box.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+        #cb-hdr { background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; color: white; font-weight: 600; }
+        #cb-hdr button { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+        #cb-msgs { flex: 1; overflow-y: auto; padding: 1rem; background: #f8faff; display: flex; flex-direction: column; gap: 0.6rem; }
+        .cb-msg { display: flex; }
+        .cb-msg.user { justify-content: flex-end; }
+        .cb-bubble { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: 14px; font-size: 0.85rem; line-height: 1.45; }
+        .cb-msg.user .cb-bubble { background: #2563eb; color: white; border-bottom-right-radius: 4px; }
+        .cb-msg.bot .cb-bubble { background: white; color: #334155; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+        #cb-input-wrap { display: flex; padding: 0.75rem; gap: 0.5rem; border-top: 1px solid #e2e8f0; }
+        #cb-input { flex: 1; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 0.5rem 0.75rem; font-size: 0.85rem; outline: none; }
+        #cb-input:focus { border-color: #3b82f6; }
+        #cb-send { background: #2563eb; color: white; border: none; border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 
-        #chatbot-box {
-            position: fixed;
-            bottom: 90px;
-            right: 24px;
-            width: 340px;
-            height: 440px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            z-index: 999;
-            overflow: hidden;
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-        #chatbot-box.open {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: all;
-        }
-        #chatbot-header {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 1rem 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-        #chatbot-header button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.3rem;
-            cursor: pointer;
-            line-height: 1;
-        }
-        #chatbot-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            background: #f8faff;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        .msg { display: flex; }
-        .msg.user { justify-content: flex-end; }
-        .msg.bot { justify-content: flex-start; }
-        .msg .bubble {
-            max-width: 80%;
-            padding: 0.6rem 0.9rem;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            line-height: 1.4;
-        }
-        .msg.user .bubble { background: #2563eb; color: white; border-bottom-right-radius: 4px; }
-        .msg.bot .bubble { background: white; color: #334155; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
-        #chatbot-input-area {
-            display: flex;
-            padding: 0.75rem;
-            border-top: 1px solid #e2e8f0;
-            gap: 0.5rem;
-        }
-        #chatbot-input {
-            flex: 1;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.88rem;
-            outline: none;
-        }
-        #chatbot-input:focus { border-color: #3b82f6; }
-        #chatbot-send {
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
+        /* MODAL */
+        .modal-header { background: linear-gradient(135deg, #3b82f6, #2563eb); border-bottom: none; }
+        .modal-title { color: white !important; font-weight: 600; }
+        .btn-close { filter: brightness(0) invert(1); }
 
-        /* Login */
-        #loginSection {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        }
-        .login-card {
-            width: 100%;
-            max-width: 420px;
-            padding: 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 40px rgba(37,99,235,0.15);
-        }
-        .login-card h2 {
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-        .login-card .subtitle {
-            color: #64748b;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-        .form-control {
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            padding: 0.6rem 1rem;
-        }
-        .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-        }
-        .form-label { font-weight: 600; color: #374151; font-size: 0.9rem; }
+        /* ADMIN */
+        .admin-mod-hdr { background: linear-gradient(135deg, #334155, #475569); padding: 0.9rem 1.25rem; display: flex; justify-content: space-between; align-items: center; color: white; }
 
-        /* Sections */
-        .app-section { display: none; }
-        .app-section.active { display: block; }
+        /* SECTIONS */
+        .section { display: none; }
+        .section.active { display: block; }
+        .main-wrap { flex: 1; padding: 2rem; max-width: 1280px; margin: 0 auto; width: 100%; }
 
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        footer { background: #1e293b; color: #94a3b8; text-align: center; padding: 1rem 2rem; font-size: 0.82rem; }
 
-        /* Section header */
-        .section-header {
-            background: linear-gradient(135deg, #a8c8f8 0%, #6fa8f5 100%);
-            padding: 0.9rem 1.25rem;
-            font-weight: 600;
-            color: #1a3a6e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Welcome header specific */
-        .welcome-header {
-            background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .welcome-header .welcome-text {
-            font-size: 0.95rem;
-            color: #1e3a5f;
-        }
-        .welcome-header .user-name {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #1a3a6e;
-        }
-
-        /* Progress section */
-        .progress-title {
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .progress-subtitle {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 0.75rem;
-        }
-
-        /* Badges */
-        .pct-badge {
-            display: inline-block;
-            background: #e2e8f0;
-            color: #475569;
-            border-radius: 20px;
-            padding: 2px 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* Admin buttons */
-        .btn-add {
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.4rem 0.9rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-add:hover { background: #1d4ed8; }
-        .btn-edit {
-            background: #f59e0b;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 0.3rem 0.7rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-        .btn-del {
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 0.3rem 0.7rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        /* Modal */
-        .modal-header { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
-        .modal-title { color: white !important; }
-        .btn-close-white { filter: invert(1); }
-
-        /* Footer */
-        footer {
-            background: #1e293b;
-            color: #94a3b8;
-            text-align: center;
-            padding: 1rem;
-            font-size: 0.85rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content { padding: 1rem; }
-            #chatbot-box { width: calc(100vw - 32px); right: 16px; }
-        }
+        @media (max-width: 768px) { .main-wrap { padding: 1rem; } #cb-box { width: calc(100vw - 2rem); right: 1rem; } }
     </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="loginSection">
-    <div class="login-card">
-        <div class="text-center mb-4">
+    <div class="login-box">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+            <div style="width:60px;height:60px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.6rem;color:white;"><i class="fas fa-brain"></i></div>
             <h2>BI com IA</h2>
-            <p class="subtitle">Plataforma de aprendizado para empreendedores</p>
+            <p class="login-subtitle">Plataforma de aprendizado para empreendedores</p>
         </div>
-        <form id="loginForm">
-            <div class="mb-3">
+        <form onsubmit="doLogin(event)">
+            <div class="mb-form">
                 <label class="form-label">Email</label>
-                <input type="email" class="form-control" id="loginEmail" placeholder="seu@email.com" required>
+                <input type="email" class="form-input" id="loginEmail" placeholder="seu@email.com" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-form">
                 <label class="form-label">Senha</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                <input type="password" class="form-input" id="loginPass" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-primary-custom w-100 justify-content-center" style="width:100%">Entrar <i class="fas fa-arrow-right"></i></button>
-            <div id="loginError" class="text-danger mt-2 text-center" style="display:none;font-size:0.9rem;">Email ou senha incorretos.</div>
+            <button type="submit" class="btn-blue" style="width:100%;justify-content:center;">Entrar <i class="fas fa-arrow-right"></i></button>
+            <p id="loginErr" style="color:#ef4444;font-size:0.85rem;text-align:center;margin-top:0.5rem;display:none;">Email ou senha incorretos.</p>
         </form>
-        <div class="mt-3 p-3 rounded" style="background:#f8faff;border:1px solid #e2e8f0;font-size:0.8rem;color:#64748b;">
-            <strong>Credenciais de teste:</strong><br>
-            Aluno: aluno@bicia.com / 123456<br>
-            Admin: admin@bicia.com / admin123
-        </div>
+        <div class="login-hint"><strong>Credenciais de teste:</strong><br>Aluno: aluno@bicia.com / 123456<br>Admin: admin@bicia.com / admin123</div>
     </div>
 </div>
 
 <!-- APP -->
 <div id="appSection" style="display:none;flex-direction:column;min-height:100vh;">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#">BI com IA</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navCollapse">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link active" href="#" id="navDash" onclick="showSection('dashboard')">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" id="navMods" onclick="showSection('modules')">Módulos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#" id="navProg" onclick="showSection('progress')">Meu Progresso</a></li>
-                    <li class="nav-item" id="navAdminLi" style="display:none;"><a class="nav-link" href="#" id="navAdmin" onclick="showSection('admin')">Admin</a></li>
-                    <li class="nav-item ms-2">
-                        <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i>Sair</button>
-                    </li>
-                </ul>
-            </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar d-flex justify-content-between align-items-center">
+        <span class="navbar-brand">BI com IA</span>
+        <div class="nav-links">
+            <button class="nav-btn active" id="btnDash" onclick="showSection('dashboard')">Dashboard</button>
+            <button class="nav-btn" id="btnMods" onclick="showSection('modules')">Módulos</button>
+            <button class="nav-btn" id="btnProg" onclick="showSection('progress')">Meu Progresso</button>
+            <button class="nav-btn" id="btnAdmin" onclick="showSection('admin')" style="display:none;">Admin</button>
+            <button class="nav-btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-wrap">
 
         <!-- DASHBOARD -->
-        <div id="secDashboard" class="app-section">
+        <div id="secDashboard" class="section active">
             <div class="row g-4">
-                <div class="col-lg-7">
-                    <!-- Welcome card -->
+                <div class="col-lg-8">
+                    <!-- Welcome Card -->
                     <div class="card">
-                        <div class="welcome-header">
+                        <div class="card-hdr">
                             <div>
-                                <div class="welcome-text">Bem-vindo(a),</div>
-                                <div class="user-name" id="welcomeName"></div>
+                                <div style="font-size:0.8rem;color:#2a5298;margin-bottom:2px;">Bem-vindo(a),</div>
+                                <div class="card-hdr-title" id="welcomeName" style="font-size:1.05rem;">Aluno</div>
                             </div>
-                            <div class="badge-info" title="Sua conta">
-                                <i class="fas fa-user-circle" style="color:#1a3a6e;font-size:1.5rem;"></i>
-                            </div>
+                            <div class="card-hdr-icon">!</div>
                         </div>
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="progress-title">Progresso Geral do Curso</div>
-                                <span class="pct-badge" id="overallPct">0% Completo</span>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                                <span style="font-weight:700;color:#1e293b;font-size:0.95rem;">Progresso Geral do Curso</span>
+                                <span id="dashPct" style="color:#64748b;font-size:0.85rem;font-weight:500;">0% Completo</span>
                             </div>
-                            <div class="progress">
-                                <div class="progress-bar" id="overallBar" style="width:0%"></div>
-                            </div>
-                            <p class="mt-3 mb-3" style="color:#64748b;font-size:0.9rem;">Continue aprendendo e aplicando a IA no seu negócio!</p>
-                            <button class="btn-primary-custom" onclick="showSection('modules')">Continuar Aprendendo <i class="fas fa-chevron-right"></i></button>
+                            <div class="prog-bar-wrap"><div class="prog-bar-fill" id="dashBar" style="width:0%"></div></div>
+                            <p style="color:#64748b;font-size:0.85rem;margin:0.75rem 0 1.25rem;">Continue aprendendo e alcance seus objetivos como empreendedor!</p>
+                            <button class="btn-blue" onclick="showSection('modules')">Continuar Aprendendo <i class="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
-
-                    <!-- Próximos Passos -->
+                    <!-- Next Steps Card -->
                     <div class="card">
-                        <div class="section-header">Próximos Passos</div>
-                        <div class="card-body" id="nextStepsBody">
-                            <!-- dynamic -->
-                        </div>
+                        <div class="card-hdr"><span class="card-hdr-title">Próximos Passos</span></div>
+                        <div class="card-body" id="nextStepsBody"></div>
                     </div>
                 </div>
-
-                <div class="col-lg-5">
-                    <!-- Módulos do Curso -->
+                <div class="col-lg-4">
+                    <!-- Modules Card -->
                     <div class="card">
-                        <div class="section-header">Módulos do Curso</div>
-                        <div class="card-body p-2" id="dashModules">
-                            <!-- dynamic -->
-                        </div>
+                        <div class="card-hdr"><span class="card-hdr-title">Módulos do Curso</span></div>
+                        <div class="card-body" id="dashModsList" style="padding:0.75rem 1.25rem;"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- MODULES -->
-        <div id="secModules" class="app-section">
+        <div id="secModules" class="section">
             <div class="card">
-                <div class="section-header">Todos os Módulos</div>
-                <div class="card-body" id="allModulesBody">
-                    <!-- dynamic -->
-                </div>
+                <div class="card-hdr"><span class="card-hdr-title"><i class="fas fa-th-large me-2"></i>Todos os Módulos</span></div>
+                <div class="card-body" id="allModsBody"></div>
             </div>
         </div>
 
-        <!-- MODULE CONTENTS -->
-        <div id="secContents" class="app-section">
+        <!-- CONTENTS -->
+        <div id="secContents" class="section">
             <div class="card">
-                <div class="section-header" id="contentsHeader">
-                    <span id="contentsTitle">Conteúdos</span>
-                    <button class="btn btn-sm btn-light" onclick="showSection('modules')"><i class="fas fa-arrow-left me-1"></i>Voltar</button>
+                <div class="card-hdr">
+                    <div>
+                        <div style="font-size:0.78rem;color:#2a5298;margin-bottom:2px;">Módulo</div>
+                        <span class="card-hdr-title" id="contentsModTitle"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <span id="contentsPct" style="font-size:0.85rem;color:#1a3a6e;font-weight:600;">0%</span>
+                        <button class="btn-sm-add" style="background:rgba(255,255,255,0.3);color:#1a3a6e;border:1.5px solid rgba(26,58,110,0.3);" onclick="showSection('modules')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    </div>
                 </div>
-                <div class="card-body" id="contentsBody">
-                    <!-- dynamic -->
-                </div>
+                <div class="card-body" id="contentsBody"></div>
             </div>
         </div>
 
         <!-- PROGRESS -->
-        <div id="secProgress" class="app-section">
+        <div id="secProgress" class="section">
             <div class="card">
-                <div class="section-header">Meu Progresso Detalhado</div>
-                <div class="card-body" id="progressBody">
-                    <!-- dynamic -->
-                </div>
+                <div class="card-hdr"><span class="card-hdr-title"><i class="fas fa-chart-bar me-2"></i>Meu Progresso</span></div>
+                <div class="card-body" id="progressBody"></div>
             </div>
         </div>
 
         <!-- ADMIN -->
-        <div id="secAdmin" class="app-section">
+        <div id="secAdmin" class="section">
             <div class="card">
-                <div class="section-header admin-header" style="background:linear-gradient(135deg,#1e293b,#334155);">
-                    <span style="color:white;">Gerenciar Módulos e Conteúdos</span>
-                    <button class="btn-add" onclick="openModuleModal(null)"><i class="fas fa-plus me-1"></i>Novo Módulo</button>
+                <div class="card-hdr" style="background:linear-gradient(135deg,#334155,#475569);">
+                    <span class="card-hdr-title" style="color:white;"><i class="fas fa-cog me-2"></i>Painel Administrativo</span>
+                    <button class="btn-sm-add" onclick="openModModal(null)"><i class="fas fa-plus"></i> Novo Módulo</button>
                 </div>
-                <div class="card-body" id="adminBody">
-                    <!-- dynamic -->
-                </div>
+                <div class="card-body" id="adminBody"></div>
             </div>
         </div>
 
     </div>
 
-    <footer>&copy; 2026 BI com IA para Empreendedores. Todos os direitos reservados.</footer>
+    <footer>© 2025 BI com IA para Empreendedores. Todos os direitos reservados.</footer>
 </div>
 
 <!-- CHATBOT -->
-<div id="chatbot-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
-<div id="chatbot-box">
-    <div id="chatbot-header">
-        <span><i class="fas fa-robot me-2"></i>Assistente BI com IA</span>
-        <button onclick="toggleChat()">&times;</button>
+<button id="cb-btn" onclick="toggleChat()"><i class="fas fa-comments"></i></button>
+<div id="cb-box">
+    <div id="cb-hdr">
+        <span><i class="fas fa-robot me-2"></i>Assistente IA</span>
+        <button onclick="toggleChat()">×</button>
     </div>
-    <div id="chatbot-messages">
-        <div class="msg bot"><div class="bubble">Olá! Sou seu assistente virtual. Posso ajudar com dúvidas sobre Marketing, Financeiro, Gestão e Estratégia. Como posso ajudar?</div></div>
+    <div id="cb-msgs">
+        <div class="cb-msg bot"><div class="cb-bubble">Olá! Sou seu assistente de aprendizado. Como posso ajudar? 😊</div></div>
     </div>
-    <div id="chatbot-input-area">
-        <input type="text" id="chatbot-input" placeholder="Digite sua dúvida...">
-        <button id="chatbot-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+    <div id="cb-input-wrap">
+        <input type="text" id="cb-input" placeholder="Digite sua dúvida..." onkeypress="if(event.key==='Enter')sendChat()">
+        <button id="cb-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 
-<!-- MODAL: Content View -->
-<div class="modal fade" id="contentModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+<!-- CONTENT MODAL -->
+<div class="modal fade" id="conModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
             <div class="modal-header">
-                <h5 class="modal-title" id="contentModalTitle"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="conModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" id="contentModalBody"></div>
-            <div class="modal-footer">
+            <div class="modal-body" style="padding:1.5rem;" id="conModalBody"></div>
+            <div class="modal-footer" style="border-top:1px solid #e2e8f0;">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 <button type="button" class="btn btn-success" id="markDoneBtn">Marcar como Concluído</button>
             </div>
@@ -647,72 +272,70 @@
     </div>
 </div>
 
-<!-- MODAL: Add/Edit Module -->
-<div class="modal fade" id="moduleModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<!-- MODULE MODAL -->
+<div class="modal fade" id="modModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
             <div class="modal-header">
-                <h5 class="modal-title" id="moduleModalTitle">Módulo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="modModalTitle">Módulo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form id="moduleForm">
+            <div class="modal-body" style="padding:1.5rem;">
+                <form id="modForm" onsubmit="saveModule(event)">
                     <input type="hidden" id="modId">
-                    <div class="mb-3">
+                    <div class="mb-form">
                         <label class="form-label">Título do Módulo</label>
-                        <input type="text" class="form-control" id="modTitle" required>
+                        <input type="text" class="form-input" id="modTitle" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-form">
                         <label class="form-label">Ícone (Font Awesome)</label>
-                        <input type="text" class="form-control" id="modIcon" placeholder="Ex: fas fa-lightbulb">
-                        <small class="text-muted">Ex: fas fa-chart-line, fas fa-dollar-sign</small>
+                        <input type="text" class="form-input" id="modIcon" placeholder="fas fa-book">
                     </div>
-                    <button type="submit" class="btn-primary-custom">Salvar</button>
+                    <button type="submit" class="btn-blue" style="width:100%;justify-content:center;">Salvar Módulo</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL: Add/Edit Content -->
-<div class="modal fade" id="contentEditModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+<!-- CONTENT EDIT MODAL -->
+<div class="modal fade" id="conEditModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
             <div class="modal-header">
-                <h5 class="modal-title" id="contentEditTitle">Conteúdo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="conEditTitle">Conteúdo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form id="contentForm">
-                    <input type="hidden" id="cId">
-                    <input type="hidden" id="cModuleId">
-                    <div class="mb-3">
-                        <label class="form-label">Tipo de Conteúdo</label>
-                        <select class="form-control" id="cType" required onchange="toggleContentFields()">
-                            <option value="">Selecione...</option>
-                            <option value="video">Videoaula</option>
+            <div class="modal-body" style="padding:1.5rem;">
+                <form id="conEditForm" onsubmit="saveContent(event)">
+                    <input type="hidden" id="ceModId">
+                    <input type="hidden" id="ceId">
+                    <div class="mb-form">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-input" id="ceType" onchange="toggleCeFields()">
+                            <option value="video">Vídeo</option>
                             <option value="text">Texto / E-book</option>
                             <option value="quiz">Quiz</option>
                             <option value="checklist">Checklist</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-form">
                         <label class="form-label">Título</label>
-                        <input type="text" class="form-control" id="cTitle" required>
+                        <input type="text" class="form-input" id="ceTitle" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-form">
                         <label class="form-label">Descrição curta</label>
-                        <input type="text" class="form-control" id="cDesc">
+                        <input type="text" class="form-input" id="ceDesc">
                     </div>
-                    <div class="mb-3" id="cUrlGroup" style="display:none;">
-                        <label class="form-label">URL (YouTube embed ou link)</label>
-                        <input type="text" class="form-control" id="cUrl" placeholder="https://www.youtube.com/embed/...">
+                    <div class="mb-form" id="ceUrlGroup">
+                        <label class="form-label">URL (embed ou link)</label>
+                        <input type="text" class="form-input" id="ceUrl" placeholder="https://...">
                     </div>
-                    <div class="mb-3" id="cTextGroup" style="display:none;">
-                        <label class="form-label">Conteúdo em texto (HTML permitido)</label>
-                        <textarea class="form-control" id="cText" rows="6"></textarea>
+                    <div class="mb-form" id="ceTextGroup" style="display:none;">
+                        <label class="form-label">Conteúdo em texto</label>
+                        <textarea class="form-input" id="ceText" rows="5"></textarea>
                     </div>
-                    <button type="submit" class="btn-primary-custom">Salvar Conteúdo</button>
+                    <button type="submit" class="btn-blue" style="width:100%;justify-content:center;">Salvar Conteúdo</button>
                 </form>
             </div>
         </div>
@@ -721,231 +344,646 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// =====================
-// DATA
-// =====================
-const USERS = {
-    'aluno@bicia.com': { password: '123456', role: 'aluno', name: 'Aluno Teste' },
-    'admin@bicia.com': { password: 'admin123', role: 'admin', name: 'Administrador' }
-};
-
+// ========== DADOS ==========
+const USERS = [
+    { email: 'aluno@bicia.com', pass: '123456', name: 'Aluno Teste', role: 'student' },
+    { email: 'admin@bicia.com', pass: 'admin123', name: 'Administrador', role: 'admin' }
+];
 const DEFAULT_MODULES = [
-    {
-        id: 'mod1', title: 'Fundamentos de IA aplicada a negócios', icon: 'fas fa-lightbulb',
-        contents: [
-            { id: 'c1_1', type: 'video', title: 'Introdução à IA para Empreendedores', desc: 'O que é IA e como ela pode transformar seu negócio.', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-            { id: 'c1_2', type: 'text', title: 'E-book: Desmistificando a IA', desc: 'Guia prático para entender os conceitos básicos.', url: '', text: '<h5>Desmistificando a IA</h5><p>A Inteligência Artificial é uma ferramenta poderosa para empreendedores. Neste e-book você vai aprender os conceitos fundamentais e como aplicá-los no seu negócio.</p>' },
-            { id: 'c1_3', type: 'quiz', title: 'Quiz: Fundamentos de IA', desc: 'Teste seus conhecimentos.', url: 'https://forms.gle/exemplo', text: '' }
-        ]
-    },
-    {
-        id: 'mod2', title: 'IA no Marketing e Vendas', icon: 'fas fa-chart-line',
-        contents: [
-            { id: 'c2_1', type: 'video', title: 'Criando Conteúdo com IA', desc: 'Ferramentas de IA para marketing digital.', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-            { id: 'c2_2', type: 'checklist', title: 'Checklist: Automação de Marketing', desc: 'Passo a passo para automatizar seu marketing.', url: '', text: '<ul><li>Configure uma ferramenta de email marketing com IA</li><li>Crie personas com auxílio de IA</li><li>Automatize respostas no WhatsApp</li><li>Use IA para geração de conteúdo</li></ul>' }
-        ]
-    },
-    {
-        id: 'mod3', title: 'IA no Financeiro', icon: 'fas fa-dollar-sign',
-        contents: [
-            { id: 'c3_1', type: 'video', title: 'Gestão Financeira com IA', desc: 'Como usar IA para controle financeiro.', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' }
-        ]
-    },
-    {
-        id: 'mod4', title: 'IA para Gestão e Produtividade', icon: 'fas fa-cogs',
-        contents: [
-            { id: 'c4_1', type: 'video', title: 'Automatizando Processos com IA', desc: 'Ferramentas para aumentar produtividade.', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' }
-        ]
-    },
-    {
-        id: 'mod5', title: 'Estratégia, Vantagem Competitiva e Talentos com IA', icon: 'fas fa-rocket',
-        contents: [
-            { id: 'c5_1', type: 'video', title: 'IA como Vantagem Competitiva', desc: 'Como usar IA estrategicamente.', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' }
-        ]
-    }
+    { id: 'mod1', title: 'Fundamentos de IA aplicada a negócios', icon: 'fas fa-lightbulb', contents: [
+        { id: 'c1', type: 'video', title: 'Introdução à IA para Empreendedores', desc: 'Visão geral sobre IA nos negócios', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c2', type: 'text', title: 'O que é Machine Learning?', desc: 'Leitura sobre fundamentos de ML', url: '', text: 'Machine Learning é uma área da IA que permite que sistemas aprendam automaticamente com a experiência.' },
+        { id: 'c3', type: 'quiz', title: 'Quiz: Fundamentos de IA', desc: 'Teste seus conhecimentos', url: 'https://forms.google.com', text: '' }
+    ]},
+    { id: 'mod2', title: 'IA no Marketing e Vendas', icon: 'fas fa-chart-line', contents: [
+        { id: 'c4', type: 'video', title: 'IA para Geração de Conteúdo', desc: 'Como usar IA para criar conteúdo', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c5', type: 'checklist', title: 'Ferramentas de IA para Marketing', desc: 'Lista de ferramentas essenciais', url: '', text: 'ChatGPT para copys\nMidjourney para imagens\nCanva IA para design\nHubSpot IA para CRM' }
+    ]},
+    { id: 'mod3', title: 'IA no Financeiro', icon: 'fas fa-dollar-sign', contents: [
+        { id: 'c6', type: 'video', title: 'IA para Previsão Financeira', desc: 'Usando IA para gestão financeira', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c7', type: 'text', title: 'Análise de Dados com IA', desc: 'Técnicas de análise financeira', url: '', text: 'A análise de dados com IA permite identificar padrões e tomar decisões mais embasadas.' }
+    ]},
+    { id: 'mod4', title: 'IA para Gestão e Produtividade', icon: 'fas fa-cogs', contents: [
+        { id: 'c8', type: 'video', title: 'Automatizando Processos com IA', desc: 'Como automatizar tarefas repetitivas', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c9', type: 'checklist', title: 'Checklist: Produtividade com IA', desc: 'Ferramentas para aumentar produtividade', url: '', text: 'Notion AI\nZapier\nMake (Integromat)\nMicrosoft Copilot' }
+    ]},
+    { id: 'mod5', title: 'Estratégia e Vantagem Competitiva com IA', icon: 'fas fa-rocket', contents: [
+        { id: 'c10', type: 'video', title: 'Estratégia Competitiva com IA', desc: 'Como usar IA para se diferenciar', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c11', type: 'text', title: 'Gestão de Talentos com IA', desc: 'RH e recrutamento inteligente', url: '', text: 'A IA está transformando o RH com ferramentas de triagem de currículos e análise de fit cultural.' }
+    ]}
 ];
 
-let modules = JSON.parse(localStorage.getItem('bicia_modules')) || JSON.parse(JSON.stringify(DEFAULT_MODULES));
-let userProgress = JSON.parse(localStorage.getItem('bicia_progress')) || {};
+let currentUser = null, currentModId = null, modules = [];
+
+function loadModules() { const s = localStorage.getItem('bi_modules'); modules = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_MODULES)); }
+function saveModules() { localStorage.setItem('bi_modules', JSON.stringify(modules)); }
+function getProgress(modId) { const k = 'bi_prog_' + (currentUser?.email||'g'); const d = JSON.parse(localStorage.getItem(k)||'{}'); return d[modId]||{}; }
+function isDone(modId, conId) { return !!getProgress(modId)[conId]; }
+function markDone(modId, conId) { const k = 'bi_prog_'+(currentUser?.email||'g'); const d = JSON.parse(localStorage.getItem(k)||'{}'); if(!d[modId])d[modId]={}; d[modId][conId]=true; localStorage.setItem(k,JSON.stringify(d)); }
+function getModPct(modId) { const mod = modules.find(m=>m.id===modId); if(!mod||!mod.contents.length) return {done:0,total:0,pct:0}; const prog=getProgress(modId); const done=mod.contents.filter(c=>prog[c.id]).length; return {done,total:mod.contents.length,pct:Math.round((done/mod.contents.length)*100)}; }
+function getOverallPct() { let t=0,d=0; modules.forEach(m=>{const p=getModPct(m.id);t+=p.total;d+=p.done;}); return t===0?0:Math.round((d/t)*100); }
+function uid(p) { return p+'_'+Date.now()+'_'+Math.random().toString(36).substr(2,5); }
+function conIcon(type) { return {video:'fas fa-play-circle',text:'fas fa-book-open',quiz:'fas fa-question-circle',checklist:'fas fa-tasks'}[type]||'fas fa-file'; }
+
+// ========== AUTH ==========
+function doLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const user = USERS.find(u => u.email===email && u.pass===pass);
+    if (!user) { document.getElementById('loginErr').style.display='block'; return; }
+    document.getElementById('loginErr').style.display='none';
+    currentUser = user;
+    document.getElementById('loginSection').style.display='none';
+    document.getElementById('appSection').style.display='flex';
+    document.getElementById('welcomeName').textContent = user.name;
+    document.getElementById('btnAdmin').style.display = user.role==='admin' ? 'block' : 'none';
+    loadModules();
+    showSection('dashboard');
+}
+function doLogout() {
+    currentUser = null;
+    document.getElementById('appSection').style.display='none';
+    document.getElementById('loginSection').style.display='flex';
+}
+
+// ========== NAVIGATION ==========
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    const map = {dashboard:'secDashboard',modules:'secModules',contents:'secContents',progress:'secProgress',admin:'secAdmin'};
+    const btnMap = {dashboard:'btnDash',modules:'btnMods',contents:'btnMods',progress:'btnProg',admin:'btnAdmin'};
+    document.getElementById(map[name])?.classList.add('active');
+    document.getElementById(btnMap[name])?.classList.add('active');
+    if(name==='dashboard') renderDashboard();
+    if(name==='modules') renderModules();
+    if(name==='contents') renderContents(currentModId);
+    if(name==='progress') renderProgress();
+    if(name==='admin') renderAdmin();
+}
+
+// ========== DASHBOARD ==========
+function renderDashboard() {
+    const pct = getOverallPct();
+    document.getElementById('dashPct').textContent = pct+'% Completo';
+    document.getElementById('dashBar').style.width = pct+'%';
+    const list = document.getElementById('dashModsList');
+    list.innerHTML = '';
+    modules.forEach(m => {
+        const {pct:mp} = getModPct(m.id);
+        const bc = mp===100?'done':mp>0?'going':'';
+        const row = document.createElement('div');
+        row.className = 'mod-row';
+        row.innerHTML = `<div class="mod-icon-wrap"><i class="${m.icon}"></i></div><span class="mod-name">${m.title}</span><span class="mod-pct-badge ${bc}">${mp}%</span>`;
+        row.onclick = () => { currentModId=m.id; showSection('contents'); };
+        list.appendChild(row);
+    });
+    const ns = document.getElementById('nextStepsBody');
+    let found = false;
+    for (const m of modules) {
+        const next = m.contents.find(c => !isDone(m.id, c.id));
+        if (next) {
+            ns.innerHTML = `<p style="margin-bottom:0.4rem;font-size:0.9rem;"><strong>Módulo:</strong> ${m.title}</p><p style="margin-bottom:1.25rem;font-size:0.9rem;"><strong>Próximo Conteúdo:</strong> ${next.title}</p><button class="btn-blue" onclick="currentModId='${m.id}';openContent('${m.id}','${next.id}')">Acessar <i class="fas fa-play-circle"></i></button>`;
+            found = true; break;
+        }
+    }
+    if (!found) ns.innerHTML = '<p style="color:#16a34a;font-weight:700;">🎉 Parabéns! Você concluiu todos os conteúdos!</p>';
+}
+
+// ========== MODULES ==========
+function renderModules() {
+    const body = document.getElementById('allModsBody');
+    body.innerHTML = '';
+    modules.forEach(m => {
+        const {done,total,pct} = getModPct(m.id);
+        const bc = pct===100?'done':pct>0?'going':'';
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+            <div class="card-hdr" onclick="currentModId='${m.id}';showSection('contents')" style="cursor:pointer;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <div class="mod-icon-wrap" style="background:rgba(255,255,255,0.4);color:#1a3a6e;"><i class="${m.icon}"></i></div>
+                    <span class="card-hdr-title">${m.title}</span>
+                </div>
+                <span class="mod-pct-badge ${bc}" style="background:rgba(255,255,255,0.5);border-color:rgba(26,58,110,0.3);">${pct}%</span>
+            </div>
+            <div class="card-body" style="padding:1rem 1.25rem;">
+                <div class="prog-bar-wrap" style="height:6px;margin-bottom:0.5rem;"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <small style="color:#94a3b8;">${done} de ${total} conteúdos concluídos</small>
+                    <button class="btn-blue" style="padding:0.4rem 1rem;font-size:0.82rem;" onclick="currentModId='${m.id}';showSection('contents')">Ver conteúdos <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>`;
+        body.appendChild(card);
+    });
+}
+
+// ========== CONTENTS ==========
+function renderContents(modId) {
+    const mod = modules.find(m=>m.id===modId);
+    if (!mod) return;
+    const {pct} = getModPct(modId);
+    document.getElementById('contentsModTitle').textContent = mod.title;
+    document.getElementById('contentsPct').textContent = pct+'%';
+    const body = document.getElementById('contentsBody');
+    body.innerHTML = '';
+    if (!mod.contents.length) { body.innerHTML='<p class="text-muted">Nenhum conteúdo disponível.</p>'; return; }
+    mod.contents.forEach(c => {
+        const done = isDone(modId, c.id);
+        const row = document.createElement('div');
+        row.className = `con-row ${done?'done':''}`;
+        row.innerHTML = `<div class="con-icon"><i class="${conIcon(c.type)}"></i></div><div class="con-info"><h6>${c.title}</h6><small>${c.desc||c.type}</small></div><div class="con-check">${done?'<i class="fas fa-check-circle"></i>':'<i class="far fa-circle"></i>'}</div>`;
+        row.onclick = () => openContent(modId, c.id);
+        body.appendChild(row);
+    });
+}
+
+function openContent(modId, conId) {
+    const mod = modules.find(m=>m.id===modId);
+    const con = mod?.contents.find(c=>c.id===conId);
+    if (!con) return;
+    currentModId = modId;
+    document.getElementById('conModalTitle').textContent = con.title;
+    const body = document.getElementById('conModalBody');
+    if (con.type==='video') {
+        body.innerHTML = `<div class="ratio ratio-16x9 mb-3"><iframe src="${con.url}" frameborder="0" allowfullscreen></iframe></div><p style="color:#64748b;">${con.desc}</p>`;
+    } else if (con.type==='text') {
+        body.innerHTML = `<p style="color:#64748b;margin-bottom:1rem;">${con.desc}</p><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;white-space:pre-line;font-size:0.9rem;">${con.text}</div>`;
+    } else if (con.type==='checklist') {
+        const items = con.text.split('\n').map(i=>`<li style="padding:4px 0;"><i class="fas fa-check-square me-2" style="color:#2563eb;"></i>${i}</li>`).join('');
+        body.innerHTML = `<p style="color:#64748b;margin-bottom:1rem;">${con.desc}</p><ul style="list-style:none;padding:0;">${items}</ul>`;
+    } else if (con.type==='quiz') {
+        body.innerHTML = `<p style="color:#64748b;margin-bottom:1rem;">${con.desc}</p><a href="${con.url}" target="_blank" class="btn-blue" style="text-decoration:none;">Acessar Quiz <i class="fas fa-external-link-alt"></i></a>`;
+    }
+    const btn = document.getElementById('markDoneBtn');
+    if (isDone(modId, conId)) {
+        btn.textContent='✓ Já Concluído'; btn.className='btn btn-success disabled'; btn.onclick=null;
+    } else {
+        btn.textContent='Marcar como Concluído'; btn.className='btn btn-success';
+        btn.onclick = () => { markDone(modId,conId); btn.textContent='✓ Já Concluído'; btn.className='btn btn-success disabled'; btn.onclick=null; renderContents(modId); renderDashboard(); };
+    }
+    new bootstrap.Modal(document.getElementById('conModal')).show();
+}
+
+// ========== PROGRESS ==========
+function renderProgress() {
+    const body = document.getElementById('progressBody');
+    body.innerHTML = '';
+    const overall = getOverallPct();
+    body.innerHTML = `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:1rem;margin-bottom:1.5rem;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><strong>Progresso Geral</strong><span style="color:#2563eb;font-weight:700;">${overall}%</span></div><div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${overall}%"></div></div></div>`;
+    modules.forEach(m => {
+        const {done,total,pct} = getModPct(m.id);
+        const div = document.createElement('div');
+        div.style.cssText = 'background:#f8faff;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;margin-bottom:1rem;';
+        div.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                <strong style="font-size:0.9rem;color:#1e293b;"><i class="${m.icon} me-2" style="color:#2563eb;"></i>${m.title}</strong>
+                <span style="font-size:0.82rem;color:#64748b;">${done}/${total} — ${pct}%</span>
+            </div>
+            <div class="prog-bar-wrap" style="margin-bottom:0.75rem;"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+            ${m.contents.map(c=>`
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid #f1f5f9;">
+                    <div><i class="${conIcon(c.type)} me-2" style="color:#3b82f6;"></i><span style="font-size:0.85rem;">${c.title}</span></div>
+                    ${isDone(m.id,c.id)?'<i class="fas fa-check-circle" style="color:#16a34a;"></i>':`<button class="btn-sm-add" style="font-size:0.73rem;padding:0.2rem 0.6rem;" onclick="markDone('${m.id}','${c.id}');renderProgress();">Marcar</button>`}
+                </div>`).join('')}`;
+        body.appendChild(div);
+    });
+}
+
+// ========== ADMIN ==========
+function renderAdmin() {
+    const body = document.getElementById('adminBody');
+    body.innerHTML = '';
+    modules.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="admin-mod-hdr" style="border-radius:12px 12px 0 0;">
+                <span><i class="${m.icon} me-2"></i>${m.title}</span>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn-sm-edit" onclick="openModModal('${m.id}')"><i class="fas fa-edit"></i> Editar</button>
+                    <button class="btn-sm-del" onclick="deleteMod('${m.id}')"><i class="fas fa-trash"></i> Excluir</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <strong style="color:#475569;font-size:0.9rem;">Conteúdos (${m.contents.length})</strong>
+                    <button class="btn-sm-add" onclick="openConEditModal('${m.id}',null)"><i class="fas fa-plus"></i> Adicionar Conteúdo</button>
+                </div>
+                ${m.contents.length===0?'<p style="color:#94a3b8;font-size:0.85rem;">Nenhum conteúdo ainda.</p>':''}
+                ${m.contents.map(c=>`
+                    <div class="con-row" style="margin-bottom:0.5rem;">
+                        <div class="con-icon"><i class="${conIcon(c.type)}"></i></div>
+                        <div class="con-info"><h6>${c.title}</h6><small>${c.type} — ${c.desc}</small></div>
+                        <div style="display:flex;gap:0.4rem;margin-left:0.5rem;">
+                            <button class="btn-sm-edit" onclick="openConEditModal('${m.id}','${c.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-sm-del" onclick="deleteCon('${m.id}','${c.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`).join('')}
+            </div>`;
+        body.appendChild(card);
+    });
+}
+
+function openModModal(modId) {
+    document.getElementById('modModalTitle').textContent = modId ? 'Editar Módulo' : 'Novo Módulo';
+    document.getElementById('modId').value = modId||'';
+    if (modId) { const m=modules.find(m=>m.id===modId); document.getElementById('modTitle').value=m.title; document.getElementById('modIcon').value=m.icon; }
+    else { document.getElementById('modForm').reset(); }
+    new bootstrap.Modal(document.getElementById('modModal')).show();
+}
+function saveModule(e) {
+    e.preventDefault();
+    const id=document.getElementById('modId').value;
+    const title=document.getElementById('modTitle').value;
+    const icon=document.getElementById('modIcon').value||'fas fa-book';
+    if (id) { const m=modules.find(m=>m.id===id); m.title=title; m.icon=icon; }
+    else { modules.push({id:uid('mod'),title,icon,contents:[]}); }
+    saveModules();
+    bootstrap.Modal.getInstance(document.getElementById('modModal')).hide();
+    renderAdmin();
+}
+function deleteMod(modId) {
+    if (confirm('Excluir este módulo e todos os seus conteúdos?')) { modules=modules.filter(m=>m.id!==modId); saveModules(); renderAdmin(); }
+}
+function openConEditModal(modId, conId) {
+    document.getElementById('conEditTitle').textContent = conId ? 'Editar Conteúdo' : 'Novo Conteúdo';
+    document.getElementById('ceModId').value = modId;
+    document.getElementById('ceId').value = conId||'';
+    if (conId) {
+        const mod=modules.find(m=>m.id===modId); const c=mod.contents.find(c=>c.id===conId);
+        document.getElementById('ceType').value=c.type;
+        document.getElementById('ceTitle').value=c.title;
+        document.getElementById('ceDesc').value=c.desc;
+        document.getElementById('ceUrl').value=c.url;
+        document.getElementById('ceText').value=c.text;
+        toggleCeFields();
+    } else { document.getElementById('conEditForm').reset(); document.getElementById('ceUrlGroup').style.display='block'; document.getElementById('ceTextGroup').style.display='none'; }
+    new bootstrap.Modal(document.getElementById('conEditModal')).show();
+}
+function toggleCeFields() {
+    const t=document.getElementById('ceType').value;
+    document.getElementById('ceUrlGroup').style.display=(t==='video'||t==='quiz')?'block':'none';
+    document.getElementById('ceTextGroup').style.display=(t==='text'||t==='checklist')?'block':'none';
+}
+function saveContent(e) {
+    e.preventDefault();
+    const modId=document.getElementById('ceModId').value;
+    const conId=document.getElementById('ceId').value;
+    const mod=modules.find(m=>m.id===modId);
+    const obj={id:conId||uid('con'),type:document.getElementById('ceType').value,title:document.getElementById('ceTitle').value,desc:document.getElementById('ceDesc').value,url:document.getElementById('ceUrl').value,text:document.getElementById('ceText').value};
+    if (conId) { const idx=mod.contents.findIndex(c=>c.id===conId); mod.contents[idx]=obj; }
+    else { mod.contents.push(obj); }
+    saveModules();
+    bootstrap.Modal.getInstance(document.getElementById('conEditModal')).hide();
+    renderAdmin();
+}
+function deleteCon(modId, conId) {
+    if (confirm('Excluir este conteúdo?')) { const mod=modules.find(m=>m.id===modId); mod.contents=mod.contents.filter(c=>c.id!==conId); saveModules(); renderAdmin(); }
+}
+
+// ========== CHATBOT ==========
+function toggleChat() { document.getElementById('cb-box').classList.toggle('open'); }
+function sendChat() {
+    const input=document.getElementById('cb-input');
+    const msg=input.value.trim();
+    if (!msg) return;
+    addCbMsg('user',msg); input.value='';
+    setTimeout(()=>addCbMsg('bot',getBotReply(msg)),800);
+}
+function addCbMsg(sender, text) {
+    const msgs=document.getElementById('cb-msgs');
+    const div=document.createElement('div');
+    div.className=`cb-msg ${sender}`;
+    div.innerHTML=`<div class="cb-bubble">${text}</div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+}
+function getBotReply(msg) {
+    const m=msg.toLowerCase();
+    if(m.includes('oi')||m.includes('olá')||m.includes('ola')) return 'Olá! Como posso te ajudar hoje?';
+    if(m.includes('marketing')) return 'O módulo de Marketing com IA aborda criação de conteúdo, automação e estratégias digitais. Quer saber mais?';
+    if(m.includes('financeiro')||m.includes('finanças')) return 'No módulo Financeiro você aprende a usar IA para fluxo de caixa e previsões. Alguma dúvida específica?';
+    if(m.includes('gestão')||m.includes('produtividade')) return 'O módulo de Gestão ensina como automatizar processos e aumentar a eficiência com IA.';
+    if(m.includes('estratégia')||m.includes('estrategia')) return 'No módulo de Estratégia exploramos como usar IA para decisões estratégicas e vantagem competitiva.';
+    if(m.includes('progresso')) return 'Acesse "Meu Progresso" no menu para ver seu avanço detalhado em cada módulo!';
+    if(m.includes('obrigad')||m.includes('valeu')) return 'De nada! Bons estudos! 🚀';
+    return 'Posso ajudar com dúvidas sobre Marketing, Financeiro, Gestão e Estratégia com IA. O que gostaria de saber?';
+}
+</script>
+</body>
+</html>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CONTEÚDO -->
+<div class="modal fade" id="conModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="conModalTitle">Título do Conteúdo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="conModalBody">
+                <!-- Conteúdo dinâmico aqui -->
+            </div>
+            <div class="modal-footer" style="border-top:none;padding:1rem 1.5rem;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" id="markDoneBtn">Marcar como Concluído</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE EDIÇÃO DE MÓDULO (ADMIN) -->
+<div class="modal fade" id="modModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modModalTitle">Editar Módulo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="modForm" onsubmit="saveModule(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="modId">
+                    <div class="mb-3">
+                        <label for="modTitle" class="form-label">Título do Módulo</label>
+                        <input type="text" class="form-input" id="modTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modIcon" class="form-label">Ícone (Font Awesome)</label>
+                        <input type="text" class="form-input" id="modIcon" placeholder="Ex: fas fa-lightbulb">
+                        <small class="text-muted">Encontre ícones em <a href="https://fontawesome.com/icons" target="_blank">fontawesome.com/icons</a></small>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:none;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-blue">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE EDIÇÃO DE CONTEÚDO (ADMIN) -->
+<div class="modal fade" id="conEditModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="conEditTitle">Editar Conteúdo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="conEditForm" onsubmit="saveContent(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="ceModId">
+                    <input type="hidden" id="ceId">
+                    <div class="mb-3">
+                        <label for="ceType" class="form-label">Tipo de Conteúdo</label>
+                        <select class="form-input" id="ceType" onchange="toggleCeFields()" required>
+                            <option value="video">Vídeo</option>
+                            <option value="text">Texto</option>
+                            <option value="checklist">Checklist</option>
+                            <option value="quiz">Quiz</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ceTitle" class="form-label">Título</label>
+                        <input type="text" class="form-input" id="ceTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ceDesc" class="form-label">Descrição Curta</label>
+                        <input type="text" class="form-input" id="ceDesc">
+                    </div>
+                    <div class="mb-3" id="ceUrlGroup">
+                        <label for="ceUrl" class="form-label">URL (Vídeo/Quiz)</label>
+                        <input type="url" class="form-input" id="ceUrl" placeholder="Ex: https://www.youtube.com/embed/...">
+                    </div>
+                    <div class="mb-3" id="ceTextGroup" style="display:none;">
+                        <label for="ceText" class="form-label">Conteúdo de Texto/Checklist</label>
+                        <textarea class="form-input" id="ceText" rows="5" placeholder="Para checklist, um item por linha."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:none;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn-blue">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ========== DATA ==========
+const USERS = [
+    { email: 'aluno@bicia.com', pass: '123456', name: 'Aluno Teste', role: 'student' },
+    { email: 'admin@bicia.com', pass: 'admin123', name: 'Administrador', role: 'admin' }
+];
+
+const DEFAULT_MODULES = [
+    { id: 'mod1', title: 'Fundamentos de IA aplicada a negócios', icon: 'fas fa-lightbulb', contents: [
+        { id: 'c1', type: 'video', title: 'Introdução à IA para Empreendedores', desc: 'Visão geral sobre IA nos negócios', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c2', type: 'text', title: 'O que é Machine Learning?', desc: 'Leitura sobre fundamentos de ML', url: '', text: 'Machine Learning é uma área da IA que permite que sistemas aprendam e melhorem automaticamente com a experiência...' },
+        { id: 'c3', type: 'quiz', title: 'Quiz: Fundamentos de IA', desc: 'Teste seus conhecimentos', url: 'https://forms.google.com', text: '' }
+    ]},
+    { id: 'mod2', title: 'IA no Marketing e Vendas', icon: 'fas fa-chart-line', contents: [
+        { id: 'c4', type: 'video', title: 'IA para Geração de Conteúdo', desc: 'Como usar IA para criar conteúdo', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c5', type: 'checklist', title: 'Checklist: Ferramentas de IA para Marketing', desc: 'Lista de ferramentas essenciais', url: '', text: '✅ ChatGPT para copys\n✅ Midjourney para imagens\n✅ Canva IA para design\n✅ HubSpot IA para CRM' }
+    ]},
+    { id: 'mod3', title: 'IA no Financeiro', icon: 'fas fa-dollar-sign', contents: [
+        { id: 'c6', type: 'video', title: 'IA para Previsão Financeira', desc: 'Usando IA para gestão financeira', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c7', type: 'text', title: 'Análise de Dados com IA', desc: 'Técnicas de análise financeira com IA', url: '', text: 'A análise de dados com IA permite identificar padrões, prever tendências e tomar decisões mais embasadas...' }
+    ]},
+    { id: 'mod4', title: 'IA para Gestão e Produtividade', icon: 'fas fa-cogs', contents: [
+        { id: 'c8', type: 'video', title: 'Automatizando Processos com IA', desc: 'Como automatizar tarefas repetitivas', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c9', type: 'checklist', title: 'Checklist: Produtividade com IA', desc: 'Ferramentas para aumentar produtividade', url: '', text: '✅ Notion AI\n✅ Zapier\n✅ Make (Integromat)\n✅ Microsoft Copilot' }
+    ]},
+    { id: 'mod5', title: 'Estratégia, Vantagem Competitiva e Talentos com IA', icon: 'fas fa-rocket', contents: [
+        { id: 'c10', type: 'video', title: 'Estratégia Competitiva com IA', desc: 'Como usar IA para se diferenciar', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
+        { id: 'c11', type: 'text', title: 'Gestão de Talentos com IA', desc: 'RH e recrutamento inteligente', url: '', text: 'A IA está transformando o RH com ferramentas de triagem de currículos, análise de fit cultural e desenvolvimento de talentos...' }
+    ]}
+];
+
+// ========== STATE ==========
 let currentUser = null;
-let currentModuleId = null;
-let currentContentId = null;
+let currentModId = null;
+let currentConId = null;
+let modules = [];
 
-function saveModules() { localStorage.setItem('bicia_modules', JSON.stringify(modules)); }
-function saveProgress() { localStorage.setItem('bicia_progress', JSON.stringify(userProgress)); }
-
-function isCompleted(modId, conId) {
-    return !!(userProgress[currentUser?.email]?.[modId]?.[conId]);
+function loadModules() {
+    const saved = localStorage.getItem('bi_modules');
+    modules = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_MODULES));
 }
-
-function markCompleted(modId, conId) {
-    if (!userProgress[currentUser.email]) userProgress[currentUser.email] = {};
-    if (!userProgress[currentUser.email][modId]) userProgress[currentUser.email][modId] = {};
-    userProgress[currentUser.email][modId][conId] = true;
-    saveProgress();
+function saveModules() {
+    localStorage.setItem('bi_modules', JSON.stringify(modules));
 }
-
-function getModuleProgress(modId) {
+function getProgress(modId) {
+    const key = 'bi_progress_' + (currentUser?.email || 'guest');
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    return data[modId] || {};
+}
+function isDone(modId, conId) {
+    return !!getProgress(modId)[conId];
+}
+function markDone(modId, conId) {
+    const key = 'bi_progress_' + (currentUser?.email || 'guest');
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data[modId]) data[modId] = {};
+    data[modId][conId] = true;
+    localStorage.setItem(key, JSON.stringify(data));
+}
+function getModPct(modId) {
     const mod = modules.find(m => m.id === modId);
     if (!mod || mod.contents.length === 0) return { done: 0, total: 0, pct: 0 };
-    const done = mod.contents.filter(c => isCompleted(modId, c.id)).length;
-    const total = mod.contents.length;
-    return { done, total, pct: Math.round((done / total) * 100) };
+    const prog = getProgress(modId);
+    const done = mod.contents.filter(c => prog[c.id]).length;
+    return { done, total: mod.contents.length, pct: Math.round((done / mod.contents.length) * 100) };
 }
-
-function getOverallProgress() {
-    let totalDone = 0, totalAll = 0;
+function getOverallPct() {
+    let totalCons = 0, doneCons = 0;
     modules.forEach(m => {
-        const p = getModuleProgress(m.id);
-        totalDone += p.done;
-        totalAll += p.total;
+        const { done, total } = getModPct(m.id);
+        totalCons += total;
+        doneCons += done;
     });
-    return totalAll === 0 ? 0 : Math.round((totalDone / totalAll) * 100);
+    return totalCons === 0 ? 0 : Math.round((doneCons / totalCons) * 100);
 }
-
 function uid(prefix) {
-    return prefix + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    return prefix + '_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+}
+function conIcon(type) {
+    const m = { video: 'fas fa-play-circle', text: 'fas fa-book-open', quiz: 'fas fa-question-circle', checklist: 'fas fa-tasks' };
+    return m[type] || 'fas fa-file';
 }
 
-// =====================
-// AUTH
-// =====================
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+// ========== AUTH ==========
+function doLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const pass = document.getElementById('loginPassword').value;
-    if (USERS[email] && USERS[email].password === pass) {
-        currentUser = { email, ...USERS[email] };
-        if (!userProgress[email]) { userProgress[email] = {}; saveProgress(); }
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('appSection').style.display = 'flex';
-        if (currentUser.role === 'admin') document.getElementById('navAdminLi').style.display = 'block';
-        showSection('dashboard');
-    } else {
-        document.getElementById('loginError').style.display = 'block';
-    }
-});
-
-function logout() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const user = USERS.find(u => u.email === email && u.pass === pass);
+    if (!user) { document.getElementById('loginErr').style.display = 'block'; return; }
+    document.getElementById('loginErr').style.display = 'none';
+    currentUser = user;
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('appSection').style.display = 'flex';
+    document.getElementById('welcomeName').textContent = user.name;
+    document.getElementById('btnAdmin').style.display = user.role === 'admin' ? 'block' : 'none';
+    loadModules();
+    showSection('dashboard');
+}
+function doLogout() {
     currentUser = null;
     document.getElementById('appSection').style.display = 'none';
     document.getElementById('loginSection').style.display = 'flex';
     document.getElementById('loginForm').reset();
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('navAdminLi').style.display = 'none';
 }
 
-// =====================
-// NAVIGATION
-// =====================
-function showSection(sec) {
-    document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-
-    if (sec === 'dashboard') {
-        document.getElementById('secDashboard').classList.add('active');
-        document.getElementById('navDash').classList.add('active');
-        renderDashboard();
-    } else if (sec === 'modules') {
-        document.getElementById('secModules').classList.add('active');
-        document.getElementById('navMods').classList.add('active');
-        renderModules();
-    } else if (sec === 'contents') {
-        document.getElementById('secContents').classList.add('active');
-        document.getElementById('navMods').classList.add('active');
-        renderContents(currentModuleId);
-    } else if (sec === 'progress') {
-        document.getElementById('secProgress').classList.add('active');
-        document.getElementById('navProg').classList.add('active');
-        renderProgress();
-    } else if (sec === 'admin') {
-        document.getElementById('secAdmin').classList.add('active');
-        document.getElementById('navAdmin').classList.add('active');
-        renderAdmin();
-    }
+// ========== NAVIGATION ==========
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const map = { dashboard: 'secDashboard', modules: 'secModules', contents: 'secContents', progress: 'secProgress', admin: 'secAdmin' };
+    const btnMap = { dashboard: 'btnDash', modules: 'btnMods', contents: 'btnMods', progress: 'btnProg', admin: 'btnAdmin' };
+    document.getElementById(map[name])?.classList.add('active');
+    document.getElementById(btnMap[name])?.classList.add('active');
+    if (name === 'dashboard') renderDashboard();
+    if (name === 'modules') renderModules();
+    if (name === 'contents') renderContents(currentModId);
+    if (name === 'progress') renderProgress();
+    if (name === 'admin') renderAdmin();
 }
 
-// =====================
-// DASHBOARD
-// =====================
+// ========== DASHBOARD ==========
 function renderDashboard() {
-    document.getElementById('welcomeName').textContent = currentUser.name;
-    const pct = getOverallProgress();
-    document.getElementById('overallPct').textContent = pct + '% Completo';
-    document.getElementById('overallBar').style.width = pct + '%';
+    const pct = getOverallPct();
+    document.getElementById('dashPct').textContent = pct + '% Completo';
+    document.getElementById('dashBar').style.width = pct + '%';
 
-    // Dash modules
-    const dashMods = document.getElementById('dashModules');
-    dashMods.innerHTML = '';
+    // Dashboard modules list
+    const list = document.getElementById('dashModsList');
+    list.innerHTML = '';
     modules.forEach(m => {
-        const { pct } = getModuleProgress(m.id);
-        const badgeClass = pct === 100 ? 'completed' : (pct > 0 ? 'in-progress' : '');
-        const div = document.createElement('div');
-        div.className = 'module-item px-2';
-        div.innerHTML = `
-            <div class="mod-icon"><i class="${m.icon}"></i></div>
-            <div class="mod-title">${m.title}</div>
-            <span class="mod-badge ${badgeClass}">${pct}%</span>
+        const { pct: mp } = getModPct(m.id);
+        const badgeClass = mp === 100 ? 'done' : mp > 0 ? 'going' : '';
+        const row = document.createElement('div');
+        row.className = 'mod-row';
+        row.innerHTML = `
+            <div class="mod-icon-wrap"><i class="${m.icon}"></i></div>
+            <span class="mod-name">${m.title}</span>
+            <span class="mod-pct-badge ${badgeClass}">${mp}%</span>
         `;
-        div.onclick = () => { currentModuleId = m.id; showSection('contents'); };
-        dashMods.appendChild(div);
+        row.onclick = () => { currentModId = m.id; showSection('contents'); };
+        list.appendChild(row);
     });
 
     // Next steps
-    const nextBody = document.getElementById('nextStepsBody');
-    nextBody.innerHTML = '';
+    const ns = document.getElementById('nextStepsBody');
     let found = false;
     for (const m of modules) {
-        const next = m.contents.find(c => !isCompleted(m.id, c.id));
+        const next = m.contents.find(c => !isDone(m.id, c.id));
         if (next) {
-            nextBody.innerHTML = `
-                <p class="mb-1"><strong>Módulo:</strong> ${m.title}</p>
-                <p class="mb-3"><strong>Próximo Conteúdo:</strong> ${next.title}</p>
-                <button class="btn-primary-custom" onclick="openContent('${m.id}','${next.id}')">Acessar <i class="fas fa-play-circle"></i></button>
+            ns.innerHTML = `
+                <p style="margin-bottom:0.4rem;font-size:0.9rem;"><strong>Módulo:</strong> ${m.title}</p>
+                <p style="margin-bottom:1.25rem;font-size:0.9rem;"><strong>Próximo Conteúdo:</strong> ${next.title}</p>
+                <button class="btn-blue" onclick="currentModId='${m.id}';openContent('${m.id}','${next.id}')">
+                    Acessar <i class="fas fa-play-circle"></i>
+                </button>
             `;
             found = true;
             break;
         }
     }
     if (!found) {
-        nextBody.innerHTML = '<p class="text-success fw-bold">🎉 Parabéns! Você concluiu todos os conteúdos disponíveis.</p>';
+        ns.innerHTML = '<p style="color:#16a34a;font-weight:700;font-size:0.95rem;">🎉 Parabéns! Você concluiu todos os conteúdos!</p>';
     }
 }
 
-// =====================
-// MODULES
-// =====================
+// ========== MODULES ==========
 function renderModules() {
-    const body = document.getElementById('allModulesBody');
+    const body = document.getElementById('allModsBody');
     body.innerHTML = '';
     modules.forEach(m => {
-        const { done, total, pct } = getModuleProgress(m.id);
-        const badgeClass = pct === 100 ? 'completed' : (pct > 0 ? 'in-progress' : '');
-        const div = document.createElement('div');
-        div.className = 'module-item px-2 mb-1';
-        div.innerHTML = `
-            <div class="mod-icon"><i class="${m.icon}"></i></div>
-            <div style="flex:1">
-                <div class="mod-title">${m.title}</div>
-                <div class="progress mt-1" style="height:5px;max-width:200px;">
-                    <div class="progress-bar" style="width:${pct}%"></div>
+        const { done, total, pct } = getModPct(m.id);
+        const badgeClass = pct === 100 ? 'done' : pct > 0 ? 'going' : '';
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-hdr" style="cursor:pointer;" onclick="currentModId='${m.id}';showSection('contents')">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <div class="mod-icon-wrap" style="background:rgba(255,255,255,0.4);color:#1a3a6e;">
+                        <i class="${m.icon}"></i>
+                    </div>
+                    <span class="card-hdr-title">${m.title}</span>
                 </div>
-                <small style="color:#94a3b8;">${done}/${total} concluídos</small>
+                <span class="mod-pct-badge ${badgeClass}" style="background:rgba(255,255,255,0.5);border-color:rgba(26,58,110,0.3);">${pct}%</span>
             </div>
-            <span class="mod-badge ${badgeClass}">${pct}%</span>
+            <div class="card-body" style="padding:1rem 1.25rem;">
+                <div class="prog-bar-wrap" style="height:6px;margin-bottom:0.5rem;">
+                    <div class="prog-bar-fill" style="width:${pct}%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <small style="color:#94a3b8;">${done} de ${total} conteúdos concluídos</small>
+                    <button class="btn-blue" style="padding:0.4rem 1rem;font-size:0.82rem;" onclick="currentModId='${m.id}';showSection('contents')">
+                        Ver conteúdos <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
         `;
-        div.onclick = () => { currentModuleId = m.id; showSection('contents'); };
-        body.appendChild(div);
+        body.appendChild(card);
     });
 }
 
-// =====================
-// CONTENTS
-// =====================
+// ========== CONTENTS ==========
 function renderContents(modId) {
     const mod = modules.find(m => m.id === modId);
     if (!mod) return;
-    document.getElementById('contentsTitle').textContent = mod.title;
+    const { pct } = getModPct(modId);
+    document.getElementById('contentsModTitle').textContent = mod.title;
+    document.getElementById('contentsPct').textContent = pct + '%';
     const body = document.getElementById('contentsBody');
     body.innerHTML = '';
     if (mod.contents.length === 0) {
@@ -953,19 +991,19 @@ function renderContents(modId) {
         return;
     }
     mod.contents.forEach(c => {
-        const done = isCompleted(modId, c.id);
-        const div = document.createElement('div');
-        div.className = `content-item ${done ? 'completed' : ''}`;
-        div.innerHTML = `
-            <div class="ci-icon"><i class="${getContentIcon(c.type)}"></i></div>
-            <div class="ci-info">
+        const done = isDone(modId, c.id);
+        const row = document.createElement('div');
+        row.className = `con-row ${done ? 'done' : ''}`;
+        row.innerHTML = `
+            <div class="con-icon"><i class="${conIcon(c.type)}"></i></div>
+            <div class="con-info">
                 <h6>${c.title}</h6>
-                <small>${c.desc}</small>
+                <small>${c.desc || c.type}</small>
             </div>
-            <div class="ci-status">${done ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-circle"></i>'}</div>
+            <div class="con-check">${done ? '<i class="fas fa-check-circle"></i>' : '<i class="far fa-circle"></i>'}</div>
         `;
-        div.onclick = () => openContent(modId, c.id);
-        body.appendChild(div);
+        row.onclick = () => openContent(modId, c.id);
+        body.appendChild(row);
     });
 }
 
@@ -973,137 +1011,136 @@ function openContent(modId, conId) {
     const mod = modules.find(m => m.id === modId);
     const con = mod?.contents.find(c => c.id === conId);
     if (!con) return;
+    currentModId = modId;
+    currentConId = conId;
 
-    currentModuleId = modId;
-    currentContentId = conId;
-
-    document.getElementById('contentModalTitle').textContent = con.title;
-    const body = document.getElementById('contentModalBody');
+    document.getElementById('conModalTitle').textContent = con.title;
+    const body = document.getElementById('conModalBody');
 
     if (con.type === 'video') {
-        body.innerHTML = `<div class="ratio ratio-16x9 mb-3"><iframe src="${con.url}" frameborder="0" allowfullscreen></iframe></div><p>${con.desc}</p>`;
-    } else if (con.type === 'text' || con.type === 'checklist') {
-        body.innerHTML = `<p class="text-muted">${con.desc}</p><div class="p-3 rounded" style="background:#f8faff;border:1px solid #e2e8f0;">${con.text}</div>`;
+        body.innerHTML = `<div class="ratio ratio-16x9 mb-3"><iframe src="${con.url}" frameborder="0" allowfullscreen></iframe></div><p style="color:#64748b;">${con.desc}</p>`;
+    } else if (con.type === 'text') {
+        body.innerHTML = `<p style="color:#64748b;margin-bottom:1rem;">${con.desc}</p><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;white-space:pre-line;font-size:0.9rem;color:#334155;">${con.text}</div>`;
+    } else if (con.type === 'checklist') {
+        const items = con.text.split('\n').map(i => `<li style="padding:4px 0;"><i class="fas fa-check-square me-2" style="color:#2563eb;"></i>${i}</li>`).join('');
+        body.innerHTML = `<p style="color:#64748b;margin-bottom:1rem;">${con.desc}</p><ul style="list-style:none;padding:0;">${items}</ul>`;
     } else if (con.type === 'quiz') {
-        body.innerHTML = `<p>${con.desc}</p><a href="${con.url}" target="_blank" class="btn-primary-custom">Acessar Quiz <i class="fas fa-external-link-alt"></i></a>`;
+        body.innerHTML = `<p style="color:#64748b;margin-bottom:1rem;">${con.desc}</p><a href="${con.url}" target="_blank" class="btn-blue" style="text-decoration:none;">Acessar Quiz <i class="fas fa-external-link-alt"></i></a>`;
     }
 
     const btn = document.getElementById('markDoneBtn');
-    if (isCompleted(modId, conId)) {
-        btn.textContent = '✓ Concluído';
+    if (isDone(modId, conId)) {
+        btn.textContent = '✓ Já Concluído';
         btn.className = 'btn btn-success disabled';
+        btn.onclick = null;
     } else {
         btn.textContent = 'Marcar como Concluído';
         btn.className = 'btn btn-success';
         btn.onclick = () => {
-            markCompleted(modId, conId);
-            btn.textContent = '✓ Concluído';
+            markDone(modId, conId);
+            btn.textContent = '✓ Já Concluído';
             btn.className = 'btn btn-success disabled';
+            btn.onclick = null;
             renderContents(modId);
             renderDashboard();
         };
     }
 
-    new bootstrap.Modal(document.getElementById('contentModal')).show();
+    new bootstrap.Modal(document.getElementById('conModal')).show();
 }
 
-// =====================
-// PROGRESS
-// =====================
+// ========== PROGRESS ==========
 function renderProgress() {
     const body = document.getElementById('progressBody');
     body.innerHTML = '';
-    const overall = getOverallProgress();
-    body.innerHTML = `
-        <div class="mb-4 p-3 rounded" style="background:#eff6ff;border:1px solid #bfdbfe;">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Progresso Geral</strong>
-                <span class="pct-badge">${overall}%</span>
-            </div>
-            <div class="progress"><div class="progress-bar" style="width:${overall}%"></div></div>
+    const overall = getOverallPct();
+    const overallCard = document.createElement('div');
+    overallCard.className = 'card';
+    overallCard.innerHTML = `
+        <div class="card-hdr"><span class="card-hdr-title">Progresso Geral</span><span style="font-size:0.85rem;color:#1a3a6e;">${overall}% Completo</span></div>
+        <div class="card-body">
+            <div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${overall}%"></div></div>
         </div>
     `;
+    body.appendChild(overallCard);
+
     modules.forEach(m => {
-        const { done, total, pct } = getModuleProgress(m.id);
-        const div = document.createElement('div');
-        div.className = 'card mb-3';
-        div.innerHTML = `
-            <div class="section-header" style="border-radius:12px 12px 0 0;">
-                <span>${m.title}</span>
-                <span class="pct-badge">${pct}%</span>
+        const { done, total, pct } = getModPct(m.id);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-hdr">
+                <span class="card-hdr-title"><i class="${m.icon} me-2"></i>${m.title}</span>
+                <span style="font-size:0.82rem;color:#1a3a6e;">${done}/${total} — ${pct}%</span>
             </div>
             <div class="card-body">
-                <div class="progress mb-2"><div class="progress-bar" style="width:${pct}%"></div></div>
-                <p class="text-muted mb-3" style="font-size:0.85rem;">${done} de ${total} conteúdos concluídos</p>
+                <div class="prog-bar-wrap" style="margin-bottom:1rem;"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
                 ${m.contents.map(c => `
-                    <div class="d-flex align-items-center justify-content-between py-2" style="border-bottom:1px solid #f0f4f8;">
-                        <div><i class="${getContentIcon(c.type)} me-2 text-primary"></i>${c.title}</div>
-                        ${isCompleted(m.id, c.id)
-                            ? '<i class="fas fa-check-circle text-success"></i>'
-                            : `<button class="btn btn-sm btn-outline-secondary" onclick="markCompleted('${m.id}','${c.id}');renderProgress();">Marcar</button>`
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid #f1f5f9;">
+                        <div><i class="${conIcon(c.type)} me-2" style="color:#3b82f6;"></i><span style="font-size:0.88rem;">${c.title}</span></div>
+                        ${isDone(m.id, c.id)
+                            ? '<i class="fas fa-check-circle" style="color:#16a34a;"></i>'
+                            : `<button class="btn-sm-add" style="font-size:0.75rem;padding:0.25rem 0.7rem;" onclick="markDone('${m.id}','${c.id}');renderProgress();">Marcar</button>`
                         }
                     </div>
                 `).join('')}
             </div>
         `;
-        body.appendChild(div);
+        body.appendChild(card);
     });
 }
 
-// =====================
-// ADMIN
-// =====================
+// ========== ADMIN ==========
 function renderAdmin() {
     const body = document.getElementById('adminBody');
     body.innerHTML = '';
     modules.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'card mb-3';
-        div.innerHTML = `
-            <div class="section-header" style="border-radius:12px 12px 0 0;background:linear-gradient(135deg,#334155,#475569);">
-                <span style="color:white;"><i class="${m.icon} me-2"></i>${m.title}</span>
-                <div>
-                    <button class="btn-edit me-1" onclick="openModuleModal('${m.id}')"><i class="fas fa-edit"></i> Editar</button>
-                    <button class="btn-del" onclick="deleteModule('${m.id}')"><i class="fas fa-trash"></i> Excluir</button>
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="admin-mod-hdr" style="border-radius:16px 16px 0 0;">
+                <span><i class="${m.icon} me-2"></i>${m.title}</span>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn-sm-edit" onclick="openModModal('${m.id}')"><i class="fas fa-edit"></i> Editar</button>
+                    <button class="btn-sm-del" onclick="deleteMod('${m.id}')"><i class="fas fa-trash"></i> Excluir</button>
                 </div>
             </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <strong style="color:#475569;">Conteúdos (${m.contents.length})</strong>
-                    <button class="btn-add" onclick="openContentModal('${m.id}', null)"><i class="fas fa-plus me-1"></i>Adicionar Conteúdo</button>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <strong style="color:#475569;font-size:0.9rem;">Conteúdos (${m.contents.length})</strong>
+                    <button class="btn-sm-add" onclick="openConEditModal('${m.id}',null)"><i class="fas fa-plus"></i> Adicionar Conteúdo</button>
                 </div>
-                ${m.contents.length === 0 ? '<p class="text-muted">Nenhum conteúdo ainda.</p>' : ''}
+                ${m.contents.length === 0 ? '<p style="color:#94a3b8;font-size:0.85rem;">Nenhum conteúdo ainda.</p>' : ''}
                 ${m.contents.map(c => `
-                    <div class="content-item mb-2">
-                        <div class="ci-icon"><i class="${getContentIcon(c.type)}"></i></div>
-                        <div class="ci-info"><h6>${c.title}</h6><small>${c.type} — ${c.desc}</small></div>
-                        <div class="d-flex gap-2 ms-2">
-                            <button class="btn-edit" onclick="openContentModal('${m.id}','${c.id}')"><i class="fas fa-edit"></i></button>
-                            <button class="btn-del" onclick="deleteContent('${m.id}','${c.id}')"><i class="fas fa-trash"></i></button>
+                    <div class="con-row" style="margin-bottom:0.5rem;">
+                        <div class="con-icon"><i class="${conIcon(c.type)}"></i></div>
+                        <div class="con-info"><h6>${c.title}</h6><small>${c.type} — ${c.desc}</small></div>
+                        <div style="display:flex;gap:0.4rem;margin-left:0.5rem;">
+                            <button class="btn-sm-edit" onclick="openConEditModal('${m.id}','${c.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-sm-del" onclick="deleteCon('${m.id}','${c.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 `).join('')}
             </div>
         `;
-        body.appendChild(div);
+        body.appendChild(card);
     });
 }
 
 // Module modal
-function openModuleModal(modId) {
-    document.getElementById('moduleModalTitle').textContent = modId ? 'Editar Módulo' : 'Novo Módulo';
+function openModModal(modId) {
+    document.getElementById('modModalTitle').textContent = modId ? 'Editar Módulo' : 'Novo Módulo';
     document.getElementById('modId').value = modId || '';
     if (modId) {
         const m = modules.find(m => m.id === modId);
         document.getElementById('modTitle').value = m.title;
         document.getElementById('modIcon').value = m.icon;
     } else {
-        document.getElementById('moduleForm').reset();
+        document.getElementById('modForm').reset();
     }
-    new bootstrap.Modal(document.getElementById('moduleModal')).show();
+    new bootstrap.Modal(document.getElementById('modModal')).show();
 }
-
-document.getElementById('moduleForm').addEventListener('submit', function(e) {
+function saveModule(e) {
     e.preventDefault();
     const id = document.getElementById('modId').value;
     const title = document.getElementById('modTitle').value;
@@ -1115,11 +1152,10 @@ document.getElementById('moduleForm').addEventListener('submit', function(e) {
         modules.push({ id: uid('mod'), title, icon, contents: [] });
     }
     saveModules();
-    bootstrap.Modal.getInstance(document.getElementById('moduleModal')).hide();
+    bootstrap.Modal.getInstance(document.getElementById('modModal')).hide();
     renderAdmin();
-});
-
-function deleteModule(modId) {
+}
+function deleteMod(modId) {
     if (confirm('Excluir este módulo e todos os seus conteúdos?')) {
         modules = modules.filter(m => m.id !== modId);
         saveModules();
@@ -1128,59 +1164,58 @@ function deleteModule(modId) {
 }
 
 // Content modal
-function openContentModal(modId, conId) {
-    document.getElementById('contentEditTitle').textContent = conId ? 'Editar Conteúdo' : 'Novo Conteúdo';
-    document.getElementById('cModuleId').value = modId;
-    document.getElementById('cId').value = conId || '';
+function openConEditModal(modId, conId) {
+    document.getElementById('conEditTitle').textContent = conId ? 'Editar Conteúdo' : 'Novo Conteúdo';
+    document.getElementById('ceModId').value = modId;
+    document.getElementById('ceId').value = conId || '';
     if (conId) {
         const mod = modules.find(m => m.id === modId);
         const c = mod.contents.find(c => c.id === conId);
-        document.getElementById('cType').value = c.type;
-        document.getElementById('cTitle').value = c.title;
-        document.getElementById('cDesc').value = c.desc;
-        document.getElementById('cUrl').value = c.url;
-        document.getElementById('cText').value = c.text;
-        toggleContentFields();
+        document.getElementById('ceType').value = c.type;
+        document.getElementById('ceTitle').value = c.title;
+        document.getElementById('ceDesc').value = c.desc;
+        document.getElementById('ceUrl').value = c.url;
+        document.getElementById('ceText').value = c.text;
+        toggleCeFields();
     } else {
-        document.getElementById('contentForm').reset();
-        document.getElementById('cUrlGroup').style.display = 'none';
-        document.getElementById('cTextGroup').style.display = 'none';
+        document.getElementById('conEditForm').reset();
+        document.getElementById('ceUrlGroup').style.display = 'block'; // Default to video/quiz fields
+        document.getElementById('ceTextGroup').style.display = 'none';
     }
-    new bootstrap.Modal(document.getElementById('contentEditModal')).show();
+    new bootstrap.Modal(document.getElementById('conEditModal')).show();
 }
 
-function toggleContentFields() {
-    const t = document.getElementById('cType').value;
-    document.getElementById('cUrlGroup').style.display = (t === 'video' || t === 'quiz') ? 'block' : 'none';
-    document.getElementById('cTextGroup').style.display = (t === 'text' || t === 'checklist') ? 'block' : 'none';
+function toggleCeFields() {
+    const t = document.getElementById('ceType').value;
+    document.getElementById('ceUrlGroup').style.display = (t === 'video' || t === 'quiz') ? 'block' : 'none';
+    document.getElementById('ceTextGroup').style.display = (t === 'text' || t === 'checklist') ? 'block' : 'none';
 }
 
-document.getElementById('contentForm').addEventListener('submit', function(e) {
+function saveContent(e) {
     e.preventDefault();
-    const modId = document.getElementById('cModuleId').value;
-    const cId = document.getElementById('cId').value;
+    const modId = document.getElementById('ceModId').value;
+    const conId = document.getElementById('ceId').value;
     const mod = modules.find(m => m.id === modId);
-    const t = document.getElementById('cType').value;
     const obj = {
-        id: cId || uid('con'),
-        type: t,
-        title: document.getElementById('cTitle').value,
-        desc: document.getElementById('cDesc').value,
-        url: document.getElementById('cUrl').value,
-        text: document.getElementById('cText').value
+        id: conId || uid('con'),
+        type: document.getElementById('ceType').value,
+        title: document.getElementById('ceTitle').value,
+        desc: document.getElementById('ceDesc').value,
+        url: document.getElementById('ceUrl').value,
+        text: document.getElementById('ceText').value
     };
-    if (cId) {
-        const idx = mod.contents.findIndex(c => c.id === cId);
+    if (conId) {
+        const idx = mod.contents.findIndex(c => c.id === conId);
         mod.contents[idx] = obj;
     } else {
         mod.contents.push(obj);
     }
     saveModules();
-    bootstrap.Modal.getInstance(document.getElementById('contentEditModal')).hide();
+    bootstrap.Modal.getInstance(document.getElementById('conEditModal')).hide();
     renderAdmin();
-});
+}
 
-function deleteContent(modId, conId) {
+function deleteCon(modId, conId) {
     if (confirm('Excluir este conteúdo?')) {
         const mod = modules.find(m => m.id === modId);
         mod.contents = mod.contents.filter(c => c.id !== conId);
@@ -1189,39 +1224,29 @@ function deleteContent(modId, conId) {
     }
 }
 
-// =====================
-// HELPERS
-// =====================
-function getContentIcon(type) {
-    const icons = { video: 'fas fa-play-circle', text: 'fas fa-book-open', quiz: 'fas fa-question-circle', checklist: 'fas fa-tasks' };
-    return icons[type] || 'fas fa-file';
-}
-
-// =====================
-// CHATBOT
-// =====================
+// ========== CHATBOT ==========
 function toggleChat() {
-    document.getElementById('chatbot-box').classList.toggle('open');
+    document.getElementById('cb-box').classList.toggle('open');
 }
 
-document.getElementById('chatbot-input').addEventListener('keypress', e => {
+document.getElementById('cb-input').addEventListener('keypress', e => {
     if (e.key === 'Enter') sendChat();
 });
 
 function sendChat() {
-    const input = document.getElementById('chatbot-input');
+    const input = document.getElementById('cb-input');
     const msg = input.value.trim();
     if (!msg) return;
-    addMsg('user', msg);
+    addCbMsg('user', msg);
     input.value = '';
-    setTimeout(() => addMsg('bot', getBotReply(msg)), 800);
+    setTimeout(() => addCbMsg('bot', getBotReply(msg)), 800);
 }
 
-function addMsg(sender, text) {
-    const msgs = document.getElementById('chatbot-messages');
+function addCbMsg(sender, text) {
+    const msgs = document.getElementById('cb-msgs');
     const div = document.createElement('div');
-    div.className = `msg ${sender}`;
-    div.innerHTML = `<div class="bubble">${text}</div>`;
+    div.className = `cb-msg ${sender}`;
+    div.innerHTML = `<div class="cb-bubble">${text}</div>`;
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
 }
@@ -1238,6 +1263,15 @@ function getBotReply(msg) {
     if (m.includes('obrigad') || m.includes('valeu')) return 'De nada! Fico feliz em ajudar. Bons estudos! 🚀';
     return 'Posso ajudar com dúvidas sobre os módulos de Marketing, Financeiro, Gestão e Estratégia. O que você gostaria de saber?';
 }
+
+// ========== INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is already logged in (e.g., from a previous session)
+    // For this example, we'll always start at the login screen.
+    // If you want to persist login, you'd check localStorage here.
+    document.getElementById('loginSection').style.display = 'flex';
+    document.getElementById('appSection').style.display = 'none';
+});
 </script>
 </body>
 </html>
