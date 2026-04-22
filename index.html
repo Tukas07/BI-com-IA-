@@ -765,32 +765,41 @@ function deleteCon(modId,conId){
 }
 
 // ====== CHATBOT ======
-function toggleChat(){document.getElementById('cbBox').classList.toggle('open');}
-function sendChat(){
-  const inp=document.getElementById('cbInput');
-  const msg=inp.value.trim();
-if(!msg)return;
-  addCbMsg('user',msg);inp.value='';
-  setTimeout(()=>addCbMsg('bot',getBotReply(msg)),800);
-}
-function addCbMsg(s,t){
-  const msgs=document.getElementById('cbMsgs');
-  const div=document.createElement('div');div.className=`cb-msg ${s}`;
-  div.innerHTML=`<div class="cb-bubble">${t}</div>`;
-  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
-}
-function getBotReply(m){
-  m=m.toLowerCase();
-  if(m.includes('oi')||m.includes('olá'))return 'Olá! Como posso te ajudar hoje?';
-  if(m.includes('marketing'))return 'O módulo de Marketing com IA aborda criação de conteúdo, automação e estratégias digitais. Quer saber mais?';
-  if(m.includes('financeiro')||m.includes('finanças'))return 'No módulo Financeiro você aprende a usar IA para fluxo de caixa e previsões. Alguma dúvida específica?';
-  if(m.includes('gestão')||m.includes('produtividade'))return 'O módulo de Gestão ensina como automatizar processos e aumentar a eficiência com IA.';
-  if(m.includes('estratégia'))return 'No módulo de Estratégia exploramos como usar IA para decisões estratégicas e vantagem competitiva.';
-  if(m.includes('progresso'))return 'Acesse "Meu Progresso" no menu para ver seu avanço detalhado em cada módulo!';
-  if(m.includes('obrigad')||m.includes('valeu'))return 'De nada! Bons estudos! 🚀';
-  return 'Posso ajudar com dúvidas sobre Marketing, Financeiro, Gestão e Estratégia com IA. O que gostaria de saber?';
-}
+const GEMINI_KEY = 'AIzaSyCY...3bffYAA'; // sua chave completa aqui
 
+async function sendChat(){
+  const inp = document.getElementById('cbInput');
+  const msg = inp.value.trim();
+  if(!msg) return;
+  addCbMsg('user', msg);
+  inp.value = '';
+  addCbMsg('bot', '⏳ Digitando...');
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          contents:[{
+            parts:[{
+              text: `Você é um assistente da plataforma "BI com IA". Responda em português de forma clara e objetiva. Pergunta: ${msg}`
+            }]
+          }]
+        })
+      }
+    );
+    const data = await res.json();
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Não consegui gerar uma resposta.';
+    const msgs = document.getElementById('cbMsgs');
+    msgs.removeChild(msgs.lastChild);
+    addCbMsg('bot', reply);
+  } catch(e) {
+    const msgs = document.getElementById('cbMsgs');
+    msgs.removeChild(msgs.lastChild);
+    addCbMsg('bot', 'Erro ao conectar. Tente novamente.');
+  }
+}
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded',()=>{
   loadModules();loadProgress();
