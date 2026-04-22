@@ -1,699 +1,802 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BI com IA</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* RESET & BASE */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; min-height: 100vh; }
-
-        /* LOGIN */
-        #loginPage { display: flex; min-height: 100vh; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%); }
-        .login-card { background: white; border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .login-logo { text-align: center; margin-bottom: 2rem; }
-        .login-logo .icon { width: 64px; height: 64px; background: linear-gradient(135deg, #7c3aed, #4f46e5); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.8rem; color: white; }
-        .login-logo h2 { font-weight: 800; color: #1e1b4b; font-size: 1.6rem; }
-        .login-logo p { color: #64748b; font-size: 0.85rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-weight: 600; color: #374151; font-size: 0.85rem; margin-bottom: 0.4rem; }
-        .form-control-custom { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
-        .form-control-custom:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
-        .btn-login { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-        .btn-login:hover { opacity: 0.9; }
-        .login-hint { background: #f8f9ff; border: 1px solid #e0e7ff; border-radius: 10px; padding: 0.75rem; font-size: 0.78rem; color: #64748b; margin-top: 1rem; line-height: 1.7; }
-        .login-error { color: #ef4444; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; display: none; }
-
-        /* APP LAYOUT */
-        #appPage { display: none; min-height: 100vh; }
-        .app-wrapper { display: flex; min-height: 100vh; }
-
-        /* SIDEBAR */
-        .sidebar { width: 260px; min-width: 260px; background: #0f172a; display: flex; flex-direction: column; min-height: 100vh; position: sticky; top: 0; }
-        .sidebar-header { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .sidebar-brand { font-size: 1.25rem; font-weight: 800; color: white; }
-        .sidebar-subtitle { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
-        .sidebar-profile { padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .profile-avatar { width: 38px; height: 38px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 1rem; flex-shrink: 0; }
-        .profile-name { font-weight: 600; color: white; font-size: 0.9rem; }
-        .profile-role { font-size: 0.72rem; color: #94a3b8; }
-        .sidebar-nav { flex: 1; padding: 0.75rem 0; overflow-y: auto; }
-        .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1.25rem; cursor: pointer; transition: all 0.2s; color: #94a3b8; font-size: 0.88rem; font-weight: 500; border-radius: 0; position: relative; }
-        .nav-item:hover { color: white; background: rgba(255,255,255,0.06); }
-        .nav-item.active { color: white; background: rgba(124,58,237,0.25); }
-        .nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #7c3aed; border-radius: 0 3px 3px 0; }
-        .nav-item .nav-icon { width: 20px; text-align: center; font-size: 0.95rem; }
-        .nav-item .nav-label { flex: 1; }
-        .nav-badge { background: rgba(124,58,237,0.3); color: #a78bfa; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700; }
-        .nav-section-title { padding: 0.75rem 1.25rem 0.25rem; font-size: 0.68rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; }
-        .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); }
-        .btn-logout { width: 100%; padding: 0.6rem; background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
-        .btn-logout:hover { background: rgba(239,68,68,0.2); }
-
-        /* MAIN CONTENT */
-        .main-content { flex: 1; padding: 2rem; overflow-x: hidden; }
-
-        /* SECTIONS */
-        .section { display: none; }
-        .section.active { display: block; }
-
-        /* WELCOME BANNER */
-        .welcome-banner { background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 60%, #4f46e5 100%); border-radius: 16px; padding: 2rem; color: white; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
-        .welcome-banner::before { content: ''; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.05); }
-        .welcome-banner h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.4rem; }
-        .welcome-banner p { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 1rem; max-width: 500px; }
-        .prog-row { display: flex; align-items: center; gap: 1rem; }
-        .prog-bar-outer { flex: 1; height: 8px; background: rgba(255,255,255,0.2); border-radius: 99px; overflow: hidden; }
-        .prog-bar-inner { height: 100%; background: linear-gradient(90deg, #a78bfa, #818cf8); border-radius: 99px; transition: width 0.5s; }
-        .prog-pct { font-weight: 700; font-size: 0.9rem; color: #a78bfa; min-width: 40px; text-align: right; }
-
-        /* METRICS CARDS */
-        .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-        .metric-card { background: white; border-radius: 14px; padding: 1.25rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-        .metric-num { font-size: 2rem; font-weight: 800; color: #1e1b4b; line-height: 1; margin-bottom: 0.4rem; }
-        .metric-label { font-size: 0.8rem; color: #64748b; font-weight: 500; margin-bottom: 0.75rem; }
-        .metric-mini-bar { height: 4px; border-radius: 99px; background: #e2e8f0; overflow: hidden; }
-        .metric-mini-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #4f46e5); border-radius: 99px; }
-
-        /* MODULES SECTION */
-        .section-title { font-size: 1.1rem; font-weight: 700; color: #1e1b4b; margin-bottom: 0.25rem; }
-        .section-sub { font-size: 0.82rem; color: #64748b; margin-bottom: 1.25rem; }
-        .module-list { display: flex; flex-direction: column; gap: 0.75rem; }
-        .module-card { background: white; border-radius: 14px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
-        .module-card:hover { border-color: #7c3aed; box-shadow: 0 4px 20px rgba(124,58,237,0.12); }
-        .mod-num { width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #4f46e5); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1rem; flex-shrink: 0; }
-        .mod-info { flex: 1; }
-        .mod-title { font-weight: 600; font-size: 0.9rem; color: #1e1b4b; margin-bottom: 2px; }
-        .mod-meta { font-size: 0.75rem; color: #94a3b8; }
-        .mod-items { font-size: 0.78rem; color: #7c3aed; font-weight: 600; background: #f3f0ff; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
-
-        /* CONTENT SECTION */
-        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: #7c3aed; font-weight: 600; font-size: 0.88rem; cursor: pointer; margin-bottom: 1.25rem; background: none; border: none; padding: 0; }
-        .back-btn:hover { text-decoration: underline; }
-        .content-list { display: flex; flex-direction: column; gap: 0.65rem; }
-        .content-card { background: white; border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; border: 1.5px solid #f1f5f9; }
-        .content-card:hover { border-color: #c4b5fd; background: #faf5ff; }
-        .content-card.done { border-color: #bbf7d0; background: #f0fdf4; }
-        .content-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-        .content-icon.video { background: #eff6ff; color: #3b82f6; }
-        .content-icon.text { background: #f0fdf4; color: #16a34a; }
-        .content-icon.checklist { background: #fef3c7; color: #d97706; }
-        .content-icon.quiz { background: #fdf2f8; color: #9333ea; }
-        .content-icon.ebook { background: #fff7ed; color: #ea580c; }
-        .content-info { flex: 1; }
-        .content-info h6 { margin: 0 0 2px; font-size: 0.88rem; font-weight: 600; color: #1e293b; }
-        .content-info small { color: #94a3b8; font-size: 0.76rem; }
-        .content-check { font-size: 1.1rem; }
-        .content-check.done { color: #16a34a; }
-        .content-check.pending { color: #e2e8f0; }
-
-        /* PROGRESS PAGE */
-        .prog-module { background: white; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-        .prog-module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-        .prog-module-title { font-weight: 600; font-size: 0.9rem; color: #1e1b4b; }
-        .prog-module-pct { font-size: 0.82rem; font-weight: 700; color: #7c3aed; }
-        .prog-bar-module { height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; margin-bottom: 0.75rem; }
-        .prog-bar-module-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #4f46e5); border-radius: 99px; transition: width 0.5s; }
-
-        /* ADMIN SECTION */
-        .admin-card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 1rem; overflow: hidden; }
-        .admin-card-header { background: linear-gradient(135deg, #1e1b4b, #3730a3); color: white; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
-        .admin-card-header h6 { margin: 0; font-weight: 600; font-size: 0.9rem; }
-        .btn-sm-edit { background: #f59e0b; color: white; border: none; border-radius: 6px; padding: 0.28rem 0.6rem; font-size: 0.76rem; cursor: pointer; }
-        .btn-sm-del { background: #ef4444; color: white; border: none; border-radius: 6px; padding: 0.28rem 0.6rem; font-size: 0.76rem; cursor: pointer; }
-        .btn-sm-add { background: #7c3aed; color: white; border: none; border-radius: 6px; padding: 0.28rem 0.7rem; font-size: 0.76rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
-        .btn-purple { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; border: none; border-radius: 10px; padding: 0.65rem 1.4rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
-        .btn-purple:hover { opacity: 0.9; }
-
-        /* CHATBOT */
-        #cb-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 24px rgba(124,58,237,0.4); z-index: 1000; border: none; transition: transform 0.2s; }
-        #cb-btn:hover { transform: scale(1.1); }
-        #cb-box { position: fixed; bottom: 90px; right: 24px; width: 340px; height: 440px; background: white; border-radius: 18px; box-shadow: 0 8px 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; z-index: 999; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(12px) scale(0.97); transition: all 0.25s ease; }
-        #cb-box.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
-        #cb-hdr { background: linear-gradient(135deg, #7c3aed, #4f46e5); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; color: white; }
-        #cb-hdr h6 { margin: 0; font-weight: 600; }
-        #cb-hdr button { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
-        #cb-msgs { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; background: #f8f9ff; }
-        .cb-msg { display: flex; }
-        .cb-msg.user { justify-content: flex-end; }
-        .cb-bubble { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: 14px; font-size: 0.84rem; line-height: 1.5; }
-        .cb-msg.user .cb-bubble { background: #7c3aed; color: white; border-bottom-right-radius: 4px; }
-        .cb-msg.bot .cb-bubble { background: white; color: #334155; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
-        #cb-footer { display: flex; padding: 0.75rem; gap: 0.5rem; border-top: 1px solid #e2e8f0; }
-        #cb-input { flex: 1; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 0.5rem 0.75rem; font-size: 0.84rem; outline: none; }
-        #cb-input:focus { border-color: #7c3aed; }
-        #cb-send { background: #7c3aed; color: white; border: none; border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-
-        /* MODAL */
-        .modal-header-purple { background: linear-gradient(135deg, #7c3aed, #4f46e5); }
-        .modal-header-purple .modal-title { color: white; font-weight: 600; }
-        .modal-header-purple .btn-close { filter: brightness(0) invert(1); }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) { .sidebar { display: none; } .metrics-row { grid-template-columns: repeat(2,1fr); } #cb-box { width: calc(100vw - 2rem); right: 1rem; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BI com IA</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
+#loginPage{display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e1b4b,#4f46e5)}
+.login-card{background:white;border-radius:20px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-icon{width:64px;height:64px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem;color:white}
+.login-card h2{font-weight:800;color:#1e1b4b;font-size:1.6rem;text-align:center}
+.login-card .sub{color:#64748b;font-size:.85rem;text-align:center;margin-bottom:2rem}
+.fl{display:block;font-weight:600;color:#374151;font-size:.85rem;margin-bottom:.4rem}
+.fc{width:100%;padding:.7rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.9rem;outline:none;margin-bottom:1rem}
+.fc:focus{border-color:#7c3aed}
+.btn-login{width:100%;padding:.75rem;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:.5rem}
+.hint{background:#f8f9ff;border:1px solid #e0e7ff;border-radius:10px;padding:.75rem;font-size:.78rem;color:#64748b;margin-top:1rem;line-height:1.8}
+.err{color:#ef4444;font-size:.85rem;text-align:center;margin-top:.5rem;display:none}
+#appPage{display:none;min-height:100vh}
+.app-wrap{display:flex;min-height:100vh}
+.sidebar{width:260px;min-width:260px;background:#0f172a;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto}
+.sb-hdr{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-brand{font-size:1.25rem;font-weight:800;color:white}
+.sb-sub{font-size:.72rem;color:#94a3b8;margin-top:2px}
+.sb-profile{padding:1rem 1.25rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-avatar{width:38px;height:38px;border-radius:50%;background:#16a34a;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1rem;flex-shrink:0}
+.sb-name{font-weight:600;color:white;font-size:.9rem}
+.sb-role{font-size:.72rem;color:#94a3b8}
+.sb-nav{flex:1;padding:.75rem 0}
+.ni{display:flex;align-items:center;gap:.75rem;padding:.65rem 1.25rem;cursor:pointer;color:#94a3b8;font-size:.88rem;font-weight:500;position:relative;border:none;background:none;width:100%;text-align:left;transition:all .2s}
+.ni:hover{color:white;background:rgba(255,255,255,.06)}
+.ni.active{color:white;background:rgba(124,58,237,.25)}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#7c3aed;border-radius:0 3px 3px 0}
+.ni-icon{width:20px;text-align:center}
+.ni-label{flex:1}
+.ni-badge{background:rgba(124,58,237,.3);color:#a78bfa;border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:700}
+.nst{padding:.75rem 1.25rem .25rem;font-size:.68rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em}
+.sb-foot{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.08)}
+.btn-out{width:100%;padding:.6rem;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.btn-out:hover{background:rgba(239,68,68,.2)}
+.main-content{flex:1;padding:2rem;min-width:0;overflow-x:hidden}
+.section{display:none}
+.section.active{display:block}
+.banner{background:linear-gradient(135deg,#1e1b4b,#4f46e5);border-radius:16px;padding:2rem;color:white;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.banner h2{font-size:1.5rem;font-weight:700;margin-bottom:.4rem}
+.banner p{font-size:.85rem;color:rgba(255,255,255,.75);margin-bottom:1rem}
+.prow{display:flex;align-items:center;gap:1rem}
+.pout{flex:1;height:8px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.pin{height:100%;background:linear-gradient(90deg,#a78bfa,#818cf8);border-radius:99px;transition:width .5s}
+.ppct{font-weight:700;font-size:.9rem;color:#a78bfa;min-width:40px;text-align:right}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.mc{background:white;border-radius:14px;padding:1.25rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.mn{font-size:2rem;font-weight:800;color:#1e1b4b;line-height:1;margin-bottom:.4rem}
+.ml{font-size:.8rem;color:#64748b;font-weight:500;margin-bottom:.75rem}
+.mbw{height:4px;border-radius:99px;background:#e2e8f0;overflow:hidden}
+.mbf{height:100%;background:linear-gradient(90deg,#7c3aed,#4f46e5);border-radius:99px}
+.sec-title{font-size:1.1rem;font-weight:700;color:#1e1b4b;margin-bottom:.25rem}
+.sec-sub{font-size:.82rem;color:#64748b;margin-bottom:1.25rem}
+.mod-list{display:flex;flex-direction:column;gap:.75rem}
+.mod-card{background:white;border-radius:14px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06);cursor:pointer;transition:all .2s;border:2px solid transparent}
+.mod-card:hover{border-color:#7c3aed;box-shadow:0 4px 20px rgba(124,58,237,.12)}
+.mod-num{width:40px;height:40px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1rem;flex-shrink:0}
+.mod-info{flex:1}
+.mod-title{font-weight:600;font-size:.9rem;color:#1e1b4b;margin-bottom:2px}
+.mod-meta{font-size:.75rem;color:#94a3b8}
+.mod-badge{font-size:.78rem;color:#7c3aed;font-weight:600;background:#f3f0ff;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.con-list{display:flex;flex-direction:column;gap:.65rem}
+.con-card{background:white;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 10px rgba(0,0,0,.05);cursor:pointer;transition:all .2s;border:1.5px solid #f1f5f9}
+.con-card:hover{border-color:#c4b5fd;background:#faf5ff}
+.con-card.done{border-color:#bbf7d0;background:#f0fdf4}
+.cicon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ci-video{background:#eff6ff;color:#3b82f6}
+.ci-ebook{background:#fff7ed;color:#ea580c}
+.ci-resumo{background:#f0fdf4;color:#16a34a}
+.ci-ficha{background:#fef3c7;color:#d97706}
+.ci-quiz{background:#fdf2f8;color:#9333ea}
+.con-info{flex:1}
+.con-info h6{margin:0 0 2px;font-size:.88rem;font-weight:600;color:#1e293b}
+.con-info small{color:#94a3b8;font-size:.76rem}
+.chk{font-size:1.1rem}
+.chk.done{color:#16a34a}
+.chk.pend{color:#e2e8f0}
+.back-btn{display:inline-flex;align-items:center;gap:.5rem;color:#7c3aed;font-weight:600;font-size:.88rem;cursor:pointer;margin-bottom:1.25rem;background:none;border:none;padding:0}
+.pmc{background:white;border-radius:14px;padding:1.25rem;margin-bottom:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.pmh{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.pmt{font-weight:600;font-size:.9rem;color:#1e1b4b}
+.pmp{font-size:.82rem;font-weight:700;color:#7c3aed}
+.pmb{height:6px;background:#f1f5f9;border-radius:99px;overflow:hidden;margin-bottom:.75rem}
+.pmbf{height:100%;background:linear-gradient(90deg,#7c3aed,#4f46e5);border-radius:99px}
+.amc{background:white;border-radius:14px;margin-bottom:1rem;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden}
+.amh{background:linear-gradient(135deg,#1e1b4b,#3730a3);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;color:white;font-weight:600;font-size:.9rem}
+.amb{padding:1.25rem}
+.btn-add{background:#7c3aed;color:white;border:none;border-radius:8px;padding:.35rem .85rem;font-size:.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.btn-edit{background:#f59e0b;color:white;border:none;border-radius:6px;padding:.3rem .65rem;font-size:.78rem;cursor:pointer}
+.btn-del{background:#ef4444;color:white;border:none;border-radius:6px;padding:.3rem .65rem;font-size:.78rem;cursor:pointer}
+.empty{text-align:center;padding:2rem;color:#94a3b8}
+.empty i{font-size:2rem;display:block;margin-bottom:.5rem;color:#e2e8f0}
+.cb-btn{position:fixed;bottom:2rem;right:2rem;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.4);z-index:1000;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.cb-btn:hover{transform:scale(1.1)}
+.cb-box{position:fixed;bottom:5.5rem;right:2rem;width:340px;background:white;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.15);z-index:1000;display:none;flex-direction:column;overflow:hidden}
+.cb-box.open{display:flex}
+.cb-hdr{background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:1rem 1.25rem;color:white;display:flex;justify-content:space-between;align-items:center}
+.cb-hdr span{font-weight:600}
+.cb-close{background:none;border:none;color:white;font-size:1.2rem;cursor:pointer}
+.cb-msgs{flex:1;padding:1rem;max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem}
+.cb-msg{display:flex}
+.cb-msg.user{justify-content:flex-end}
+.cb-bubble{padding:.6rem 1rem;border-radius:12px;font-size:.85rem;max-width:80%;line-height:1.4}
+.cb-msg.bot .cb-bubble{background:#f1f5f9;color:#1e293b;border-radius:4px 12px 12px 12px}
+.cb-msg.user .cb-bubble{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border-radius:12px 4px 12px 12px}
+.cb-foot{display:flex;gap:.5rem;padding:.75rem;border-top:1px solid #f1f5f9}
+.cb-input{flex:1;border:1.5px solid #e2e8f0;border-radius:8px;padding:.5rem .75rem;font-size:.85rem;outline:none}
+.cb-input:focus{border-color:#7c3aed}
+.cb-send{background:#7c3aed;color:white;border:none;border-radius:8px;padding:.5rem .85rem;cursor:pointer}
+.btn-purple{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:10px;padding:.65rem 1.4rem;font-size:.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+</style>
 </head>
 <body>
 
-<!-- ===== LOGIN ===== -->
+<!-- LOGIN -->
 <div id="loginPage">
-    <div class="login-card">
-        <div class="login-logo">
-            <div class="icon"><i class="fas fa-brain"></i></div>
-            <h2>BI com IA</h2>
-            <p>Sua trilha de conhecimento para empreendedores</p>
-        </div>
-        <form onsubmit="doLogin(event)">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="lEmail" class="form-control-custom" placeholder="seu@email.com" required>
-            </div>
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="lPass" class="form-control-custom" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt me-2"></i>Entrar</button>
-            <div class="login-error" id="lError">Email ou senha incorretos.</div>
-        </form>
-        <div class="login-hint">
-            <strong>Aluno:</strong> aluno@bicia.com / 123456<br>
-            <strong>Admin:</strong> admin@bicia.com / admin123
-        </div>
+  <div class="login-card">
+    <div class="login-icon"><i class="fas fa-brain"></i></div>
+    <h2>BI com IA</h2>
+    <p class="sub">Sua trilha de conhecimento</p>
+    <form onsubmit="doLogin(event)">
+      <label class="fl">E-mail</label>
+      <input type="email" id="lEmail" class="fc" placeholder="seu@email.com" required>
+      <label class="fl">Senha</label>
+      <input type="password" id="lPass" class="fc" placeholder="••••••" required>
+      <div id="lErr" class="err">E-mail ou senha incorretos.</div>
+      <button type="submit" class="btn-login">Entrar</button>
+    </form>
+    <div class="hint">
+      <strong>Aluno:</strong> aluno@bicia.com / 123456<br>
+      <strong>Admin:</strong> admin@bicia.com / admin123
     </div>
+  </div>
 </div>
 
-<!-- ===== APP ===== -->
+<!-- APP -->
 <div id="appPage">
-    <div class="app-wrapper">
+  <div class="app-wrap">
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-brand"><i class="fas fa-brain me-2" style="color:#a78bfa;"></i>BI com IA</div>
-                <div class="sidebar-subtitle">Sua trilha de conhecimento</div>
-            </div>
-            <div class="sidebar-profile">
-                <div class="profile-avatar" id="sideAvatar">L</div>
-                <div>
-                    <div class="profile-name" id="sideName">Lucas</div>
-                    <div class="profile-role" id="sideRole">Aluno</div>
-                </div>
-            </div>
-            <nav class="sidebar-nav">
-                <div class="nav-section-title">Principal</div>
-                <div class="nav-item active" id="nav-dashboard" onclick="showSection('dashboard')">
-                    <span class="nav-icon"><i class="fas fa-th-large"></i></span>
-                    <span class="nav-label">Dashboard</span>
-                </div>
-                <div class="nav-item" id="nav-videoaulas" onclick="showSection('videoaulas')">
-                    <span class="nav-icon"><i class="fas fa-play-circle"></i></span>
-                    <span class="nav-label">Videoaulas</span>
-                    <span class="nav-badge" id="badge-videoaulas">0</span>
-                </div>
-                <div class="nav-item" id="nav-ebooks" onclick="showSection('ebooks')">
-                    <span class="nav-icon"><i class="fas fa-book-open"></i></span>
-                    <span class="nav-label">E-books</span>
-                    <span class="nav-badge" id="badge-ebooks">0</span>
-                </div>
-                <div class="nav-item" id="nav-resumos" onclick="showSection('resumos')">
-                    <span class="nav-icon"><i class="fas fa-bookmark"></i></span>
-                    <span class="nav-label">Resumos de Livros</span>
-                    <span class="nav-badge" id="badge-resumos">0</span>
-                </div>
-                <div class="nav-item" id="nav-fichas" onclick="showSection('fichas')">
-                    <span class="nav-icon"><i class="fas fa-sticky-note"></i></span>
-                    <span class="nav-label">Fichas Resumo</span>
-                    <span class="nav-badge" id="badge-fichas">0</span>
-                </div>
-                <div class="nav-item" id="nav-todo" onclick="showSection('todo')">
-                    <span class="nav-icon"><i class="fas fa-list"></i></span>
-                    <span class="nav-label">Todo o Conteúdo</span>
-                </div>
-                <div class="nav-section-title" style="margin-top:0.5rem;">Aprendizado</div>
-                <div class="nav-item" id="nav-cursos" onclick="showSection('cursos')">
-                    <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span>
-                    <span class="nav-label">Cursos</span>
-                </div>
-                <div class="nav-item" id="nav-modulos" onclick="showSection('modulos')">
-                    <span class="nav-icon"><i class="fas fa-cubes"></i></span>
-                    <span class="nav-label">Módulos</span>
-                </div>
-                <div class="nav-item" id="nav-progresso" onclick="showSection('progresso')">
-                    <span class="nav-icon"><i class="fas fa-chart-bar"></i></span>
-                    <span class="nav-label">Meu Progresso</span>
-                </div>
-                <div id="adminNav" style="display:none;">
-                    <div class="nav-section-title" style="margin-top:0.5rem;">Administração</div>
-                    <div class="nav-item" id="nav-admin" onclick="showSection('admin')">
-                        <span class="nav-icon"><i class="fas fa-cog"></i></span>
-                        <span class="nav-label">Gerenciar Conteúdo</span>
-                    </div>
-                </div>
-            </nav>
-            <div class="sidebar-footer">
-                <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sair da Plataforma</button>
-            </div>
-        </aside>
-
-        <!-- MAIN -->
-        <main class="main-content">
-
-            <!-- DASHBOARD -->
-            <div class="section active" id="sec-dashboard">
-                <div class="welcome-banner">
-                    <h2>Bem-vindo, <span id="welcomeName">Lucas</span>! 👋</h2>
-                    <p>Sua plataforma de BI com Inteligência Artificial. Continue aprendendo e transformando seu negócio.</p>
-                    <div class="prog-row">
-                        <span style="font-size:0.82rem;color:rgba(255,255,255,0.7);">Progresso Geral:</span>
-                        <div class="prog-bar-outer">
-                            <div class="prog-bar-inner" id="dashProgBar" style="width:0%"></div>
-                        </div>
-                        <span class="prog-pct" id="dashProgPct">0%</span>
-                    </div>
-                </div>
-
-                <div class="metrics-row">
-                    <div class="metric-card">
-                        <div class="metric-num" id="metVideoaulas">0</div>
-                        <div class="metric-label">Videoaulas</div>
-                        <div class="metric-mini-bar"><div class="metric-mini-fill" id="metVideoBar" style="width:0%"></div></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-num" id="metHoras">0h</div>
-                        <div class="metric-label">Horas de Conteúdo</div>
-                        <div class="metric-mini-bar"><div class="metric-mini-fill" style="width:60%"></div></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-num" id="metSequencia">0</div>
-                        <div class="metric-label">Sequência de Curso</div>
-                        <div class="metric-mini-bar"><div class="metric-mini-fill" id="metSeqBar" style="width:0%"></div></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-num" id="metFichas">0</div>
-                        <div class="metric-label">Fichas Resumo</div>
-                        <div class="metric-mini-bar"><div class="metric-mini-fill" id="metFichasBar" style="width:0%"></div></div>
-                    </div>
-                </div>
-
-                <div class="section-title">Módulos do Curso</div>
-                <div class="section-sub" id="dashModSub">0 módulos</div>
-                <div class="module-list" id="dashModList"></div>
-            </div>
-
-            <!-- VIDEOAULAS -->
-            <div class="section" id="sec-videoaulas">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-play-circle me-2" style="color:#7c3aed;"></i>Videoaulas</h4>
-                <div class="content-list" id="listVideoaulas"></div>
-            </div>
-
-            <!-- EBOOKS -->
-            <div class="section" id="sec-ebooks">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-book-open me-2" style="color:#7c3aed;"></i>E-books</h4>
-                <div class="content-list" id="listEbooks"></div>
-            </div>
-
-            <!-- RESUMOS -->
-            <div class="section" id="sec-resumos">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-bookmark me-2" style="color:#7c3aed;"></i>Resumos de Livros</h4>
-                <div class="content-list" id="listResumos"></div>
-            </div>
-
-            <!-- FICHAS -->
-            <div class="section" id="sec-fichas">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-sticky-note me-2" style="color:#7c3aed;"></i>Fichas Resumo</h4>
-                <div class="content-list" id="listFichas"></div>
-            </div>
-
-            <!-- TODO O CONTEÚDO -->
-            <div class="section" id="sec-todo">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-list me-2" style="color:#7c3aed;"></i>Todo o Conteúdo</h4>
-                <div class="content-list" id="listTodo"></div>
-            </div>
-
-            <!-- CURSOS -->
-            <div class="section" id="sec-cursos">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-graduation-cap me-2" style="color:#7c3aed;"></i>Cursos</h4>
-                <div style="background:white;border-radius:14px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);text-align:center;color:#94a3b8;">
-                    <i class="fas fa-graduation-cap" style="font-size:2.5rem;margin-bottom:1rem;color:#e2e8f0;"></i>
-                    <p>Nenhum curso disponível no momento.</p>
-                </div>
-            </div>
-
-            <!-- MÓDULOS -->
-            <div class="section" id="sec-modulos">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:0.25rem;"><i class="fas fa-cubes me-2" style="color:#7c3aed;"></i>Módulos</h4>
-                <div class="section-sub" id="modSubtitle"></div>
-                <div class="module-list" id="allModList"></div>
-            </div>
-
-            <!-- CONTEÚDOS DO MÓDULO -->
-            <div class="section" id="sec-contents">
-                <button class="back-btn" onclick="showSection('modulos')"><i class="fas fa-arrow-left"></i> Voltar para Módulos</button>
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:0.25rem;" id="contentsTitle">Módulo</h4>
-                <div class="section-sub" id="contentsSub"></div>
-                <div class="content-list" id="contentsList"></div>
-            </div>
-
-            <!-- PROGRESSO -->
-            <div class="section" id="sec-progresso">
-                <h4 style="font-weight:700;color:#1e1b4b;margin-bottom:1.25rem;"><i class="fas fa-chart-bar me-2" style="color:#7c3aed;"></i>Meu Progresso</h4>
-                <div id="progressBody"></div>
-            </div>
-
-            <!-- ADMIN -->
-            <div class="section" id="sec-admin">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-                    <h4 style="font-weight:700;color:#1e1b4b;margin:0;"><i class="fas fa-cog me-2" style="color:#7c3aed;"></i>Gerenciar Conteúdo</h4>
-                    <button class="btn-purple" onclick="openModModal(null)"><i class="fas fa-plus"></i> Novo Módulo</button>
-                </div>
-                <div id="adminBody"></div>
-            </div>
-
-        </main>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-hdr">
+        <div class="sb-brand">BI com IA</div>
+        <div class="sb-sub">Sua trilha de conhecimento</div>
+      </div>
+      <div class="sb-profile">
+        <div class="sb-avatar" id="sideAvatar">L</div>
+        <div>
+          <div class="sb-name" id="sideName">Usuário</div>
+          <div class="sb-role" id="sideRole">Aluno</div>
+        </div>
+      </div>
+      <div class="sb-nav">
+        <div class="nst">Principal</div>
+        <button class="ni active" id="nav-dashboard" onclick="showSection('dashboard')">
+          <span class="ni-icon"><i class="fas fa-home"></i></span>
+          <span class="ni-label">Dashboard</span>
+        </button>
+        <div class="nst">Conteúdo</div>
+        <button class="ni" id="nav-videoaulas" onclick="showSection('videoaulas')">
+          <span class="ni-icon"><i class="fas fa-play-circle"></i></span>
+          <span class="ni-label">Videoaulas</span>
+          <span class="ni-badge" id="badge-videoaulas">0</span>
+        </button>
+        <button class="ni" id="nav-ebooks" onclick="showSection('ebooks')">
+          <span class="ni-icon"><i class="fas fa-book-open"></i></span>
+          <span class="ni-label">E-books</span>
+          <span class="ni-badge" id="badge-ebooks">0</span>
+        </button>
+        <button class="ni" id="nav-resumos" onclick="showSection('resumos')">
+          <span class="ni-icon"><i class="fas fa-bookmark"></i></span>
+          <span class="ni-label">Resumos de Livros</span>
+          <span class="ni-badge" id="badge-resumos">0</span>
+        </button>
+        <button class="ni" id="nav-fichas" onclick="showSection('fichas')">
+          <span class="ni-icon"><i class="fas fa-sticky-note"></i></span>
+          <span class="ni-label">Fichas Resumo</span>
+          <span class="ni-badge" id="badge-fichas">0</span>
+        </button>
+        <button class="ni" id="nav-todo" onclick="showSection('todo')">
+          <span class="ni-icon"><i class="fas fa-list"></i></span>
+          <span class="ni-label">Todo o Conteúdo</span>
+        </button>
+        <div class="nst">Curso</div>
+        <button class="ni" id="nav-modulos" onclick="showSection('modulos')">
+          <span class="ni-icon"><i class="fas fa-layer-group"></i></span>
+          <span class="ni-label">Módulos</span>
+        </button>
+        <button class="ni" id="nav-progresso" onclick="showSection('progresso')">
+          <span class="ni-icon"><i class="fas fa-chart-line"></i></span>
+          <span class="ni-label">Meu Progresso</span>
+        </button>
+        <div id="adminNav" style="display:none">
+          <div class="nst">Administração</div>
+          <button class="ni" id="nav-admin" onclick="showSection('admin')">
+            <span class="ni-icon"><i class="fas fa-cog"></i></span>
+            <span class="ni-label">Painel Admin</span>
+          </button>
+        </div>
+      </div>
+      <div class="sb-foot">
+        <button class="btn-out" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+      </div>
     </div>
-</div>
 
-<!-- CHATBOT BTN -->
-<button id="cb-btn" onclick="toggleChat()" title="Assistente IA"><i class="fas fa-comment-dots"></i></button>
+    <!-- MAIN -->
+    <div class="main-content">
 
-<!-- CHATBOT BOX -->
-<div id="cb-box">
-    <div id="cb-hdr">
-        <h6><i class="fas fa-robot me-2"></i>Assistente IA</h6>
-        <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+      <!-- DASHBOARD -->
+      <div class="section active" id="sec-dashboard">
+        <div class="banner">
+          <h2>Bem-vindo(a), <span id="welcomeName">Lucas</span>!</h2>
+          <p>Continue sua jornada de aprendizado com IA para empreendedores.</p>
+          <div class="prow">
+            <div class="pout"><div class="pin" id="dashProgBar" style="width:0%"></div></div>
+            <div class="ppct" id="dashProgPct">0%</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="mc"><div class="mn" id="metVideoaulas">0</div><div class="ml">Videoaulas</div><div class="mbw"><div class="mbf" id="metVideoBar" style="width:0%"></div></div></div>
+          <div class="mc"><div class="mn" id="metHoras">0h</div><div class="ml">Horas de Conteúdo</div><div class="mbw"><div class="mbf" style="width:60%"></div></div></div>
+          <div class="mc"><div class="mn" id="metSequencia">0</div><div class="ml">Conteúdos Concluídos</div><div class="mbw"><div class="mbf" id="metSeqBar" style="width:0%"></div></div></div>
+          <div class="mc"><div class="mn" id="metFichas">0</div><div class="ml">Fichas Resumo</div><div class="mbw"><div class="mbf" id="metFichasBar" style="width:0%"></div></div></div>
+        </div>
+        <div class="sec-title">Módulos do Curso</div>
+        <div class="sec-sub" id="dashModSub">Carregando...</div>
+        <div class="mod-list" id="dashModList"></div>
+      </div>
+
+      <!-- VIDEOAULAS -->
+      <div class="section" id="sec-videoaulas">
+        <div class="sec-title">Videoaulas</div>
+        <div class="sec-sub">Todos os vídeos do curso</div>
+        <div class="con-list" id="listVideoaulas"></div>
+      </div>
+
+      <!-- EBOOKS -->
+      <div class="section" id="sec-ebooks">
+        <div class="sec-title">E-books</div>
+        <div class="sec-sub">Materiais em formato de livro digital</div>
+        <div class="con-list" id="listEbooks"></div>
+      </div>
+
+      <!-- RESUMOS -->
+      <div class="section" id="sec-resumos">
+        <div class="sec-title">Resumos de Livros</div>
+        <div class="sec-sub">Resumos dos principais livros sobre IA e negócios</div>
+        <div class="con-list" id="listResumos"></div>
+      </div>
+
+      <!-- FICHAS -->
+      <div class="section" id="sec-fichas">
+        <div class="sec-title">Fichas Resumo</div>
+        <div class="sec-sub">Checklists e fichas práticas</div>
+        <div class="con-list" id="listFichas"></div>
+      </div>
+
+      <!-- TODO -->
+      <div class="section" id="sec-todo">
+        <div class="sec-title">Todo o Conteúdo</div>
+        <div class="sec-sub">Todos os materiais disponíveis no curso</div>
+        <div class="con-list" id="listTodo"></div>
+      </div>
+
+      <!-- MÓDULOS -->
+      <div class="section" id="sec-modulos">
+        <div class="sec-title">Módulos do Curso</div>
+        <div class="sec-sub" id="modulosSub">Carregando...</div>
+        <div class="mod-list" id="modulosList"></div>
+      </div>
+
+      <!-- CONTENTS -->
+      <div class="section" id="sec-contents">
+        <button class="back-btn" onclick="history.go(-1) || showSection('modulos')"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <div class="sec-title" id="contentModTitle">Módulo</div>
+        <div class="sec-sub" id="contentModSub"></div>
+        <div class="con-list" id="contentsList"></div>
+      </div>
+
+      <!-- PROGRESSO -->
+      <div class="section" id="sec-progresso">
+        <div class="sec-title">Meu Progresso</div>
+        <div class="sec-sub">Acompanhe sua evolução em cada módulo</div>
+        <div id="progressoBody"></div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="section" id="sec-admin">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <div><div class="sec-title">Painel Administrativo</div><div class="sec-sub">Gerencie módulos e conteúdos</div></div>
+          <button class="btn-add" onclick="openModModal(null)"><i class="fas fa-plus"></i> Novo Módulo</button>
+        </div>
+        <div id="adminBody"></div>
+      </div>
+
     </div>
-    <div id="cb-msgs">
-        <div class="cb-msg bot"><div class="cb-bubble">Olá! Sou seu assistente de IA. Como posso te ajudar com seus estudos hoje?</div></div>
-    </div>
-    <div id="cb-footer">
-        <input type="text" id="cb-input" placeholder="Digite sua dúvida...">
-        <button id="cb-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
-    </div>
+  </div>
 </div>
 
 <!-- MODAL CONTEÚDO -->
 <div class="modal fade" id="conModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
-            <div class="modal-header modal-header-purple">
-                <h5 class="modal-title" id="conModalTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="conModalBody"></div>
-            <div class="modal-footer" style="border-top:1px solid #f1f5f9;">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" id="markDoneBtn" class="btn-purple">Marcar como Concluído</button>
-            </div>
-        </div>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="border-radius:16px;border:none">
+      <div class="modal-header" style="border-bottom:1px solid #f1f5f9">
+        <h5 class="modal-title" id="conModalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="conModalBody"></div>
+      <div class="modal-footer" style="border-top:none">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button class="btn btn-success" id="markDoneBtn">Marcar como Concluído</button>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- MODAL MÓDULO (ADMIN) -->
+<!-- MODAL MÓDULO ADMIN -->
 <div class="modal fade" id="modModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
-            <div class="modal-header modal-header-purple">
-                <h5 class="modal-title" id="modModalTitle">Novo Módulo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form onsubmit="saveModule(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="modId">
-                    <div class="form-group mb-3">
-                        <label class="form-label fw-semibold">Título do Módulo</label>
-                        <input type="text" class="form-control" id="modTitle" required>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label fw-semibold">Ícone (Font Awesome)</label>
-                        <input type="text" class="form-control" id="modIcon" placeholder="Ex: fas fa-lightbulb">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label fw-semibold">Duração estimada</label>
-                        <input type="text" class="form-control" id="modDuration" placeholder="Ex: 1h 30min">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn-purple">Salvar Módulo</button>
-                </div>
-            </form>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px;border:none">
+      <div class="modal-header"><h5 class="modal-title" id="modModalTitle">Módulo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form onsubmit="saveModule(event)">
+        <div class="modal-body">
+          <input type="hidden" id="modId">
+          <div class="mb-3"><label class="fl">Título</label><input type="text" id="modTitle" class="fc" required></div>
+          <div class="mb-3"><label class="fl">Duração (ex: 1h 30min)</label><input type="text" id="modDuration" class="fc" placeholder="Ex: 1h 30min"></div>
+          <div class="mb-3"><label class="fl">Ícone Font Awesome</label><input type="text" id="modIcon" class="fc" placeholder="fas fa-book"></div>
         </div>
+        <div class="modal-footer" style="border-top:none"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn-purple">Salvar</button></div>
+      </form>
     </div>
+  </div>
 </div>
 
-<!-- MODAL CONTEÚDO (ADMIN) -->
+<!-- MODAL CONTEÚDO ADMIN -->
 <div class="modal fade" id="conEditModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius:16px;overflow:hidden;border:none;">
-            <div class="modal-header modal-header-purple">
-                <h5 class="modal-title" id="conEditTitle">Novo Conteúdo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form onsubmit="saveContent(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="ceModId">
-                    <input type="hidden" id="ceConId">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tipo</label>
-                        <select class="form-select" id="ceType" onchange="toggleCeFields()">
-                            <option value="video">Videoaula</option>
-                            <option value="ebook">E-book</option>
-                            <option value="resumo">Resumo de Livro</option>
-                            <option value="ficha">Ficha Resumo</option>
-                            <option value="quiz">Quiz</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Título</label>
-                        <input type="text" class="form-control" id="ceTitle" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Descrição</label>
-                        <input type="text" class="form-control" id="ceDesc">
-                    </div>
-                    <div class="mb-3" id="ceUrlGroup">
-                        <label class="form-label fw-semibold">URL</label>
-                        <input type="text" class="form-control" id="ceUrl" placeholder="https://...">
-                    </div>
-                    <div class="mb-3" id="ceTextGroup" style="display:none;">
-                        <label class="form-label fw-semibold">Conteúdo de Texto</label>
-                        <textarea class="form-control" id="ceText" rows="5"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn-purple">Salvar Conteúdo</button>
-                </div>
-            </form>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px;border:none">
+      <div class="modal-header"><h5 class="modal-title" id="conEditTitle">Conteúdo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form onsubmit="saveContent(event)">
+        <div class="modal-body">
+          <input type="hidden" id="ceModId">
+          <input type="hidden" id="ceId">
+          <div class="mb-3"><label class="fl">Tipo</label>
+            <select id="ceType" class="fc" onchange="toggleCeFields()">
+              <option value="video">Vídeo</option>
+              <option value="ebook">E-book</option>
+              <option value="resumo">Resumo de Livro</option>
+              <option value="ficha">Ficha Resumo</option>
+              <option value="quiz">Quiz</option>
+            </select>
+          </div>
+          <div class="mb-3"><label class="fl">Título</label><input type="text" id="ceTitle" class="fc" required></div>
+          <div class="mb-3"><label class="fl">Descrição</label><input type="text" id="ceDesc" class="fc"></div>
+          <div class="mb-3" id="ceUrlGroup"><label class="fl">URL</label><input type="text" id="ceUrl" class="fc" placeholder="https://..."></div>
+          <div class="mb-3" id="ceTextGroup" style="display:none"><label class="fl">Conteúdo</label><textarea id="ceText" class="fc" rows="5"></textarea></div>
         </div>
+        <div class="modal-footer" style="border-top:none"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn-purple">Salvar</button></div>
+      </form>
     </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<button class="cb-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></button>
+<div class="cb-box" id="cbBox">
+  <div class="cb-hdr"><span><i class="fas fa-robot me-2"></i>Assistente IA</span><button class="cb-close" onclick="toggleChat()">×</button></div>
+  <div class="cb-msgs" id="cbMsgs">
+    <div class="cb-msg bot"><div class="cb-bubble">Olá! Sou seu assistente de aprendizado. Como posso ajudar?</div></div>
+  </div>
+  <div class="cb-foot">
+    <input class="cb-input" id="cbInput" placeholder="Digite sua dúvida..." onkeypress="if(event.key==='Enter')sendChat()">
+    <button class="cb-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ==================== DATA ====================
-const USERS = [
-    { email: 'aluno@bicia.com', pass: '123456', name: 'Lucas', role: 'student' },
-    { email: 'admin@bicia.com', pass: 'admin123', name: 'Admin', role: 'admin' }
+// ====== DADOS ======
+const USERS=[
+  {email:'aluno@bicia.com',pass:'123456',name:'Lucas',role:'aluno'},
+  {email:'admin@bicia.com',pass:'admin123',name:'Admin',role:'admin'}
 ];
 
-const DEFAULT_MODULES = [
-    { id: 'm1', title: 'Fundamentos de IA aplicada a negócios', icon: 'fas fa-lightbulb', duration: '1h 00min', contents: [
-        { id: 'c1', type: 'video', title: 'Introdução à IA para Empreendedores', desc: 'Visão geral sobre IA nos negócios', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-        { id: 'c2', type: 'ebook', title: 'Guia: IA para Iniciantes', desc: 'Material complementar em PDF', url: '#', text: '' }
-    ]},
-    { id: 'm2', title: 'IA no Marketing e Vendas', icon: 'fas fa-chart-line', duration: '1h 30min', contents: [
-        { id: 'c3', type: 'video', title: 'IA para Geração de Conteúdo', desc: 'Como usar IA para criar conteúdo de marketing', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-        { id: 'c4', type: 'ficha', title: 'Ferramentas de IA para Marketing', desc: 'Lista com as melhores ferramentas', url: '', text: 'ChatGPT — Geração de textos e copys\nMidjourney — Criação de imagens\nCanva IA — Design automatizado\nHubSpot IA — CRM inteligente\nJasper — Copywriting avançado' },
-        { id: 'c5', type: 'resumo', title: 'Marketing 4.0 — Philip Kotler', desc: 'Resumo do livro com foco em IA', url: '', text: 'Philip Kotler em Marketing 4.0 aborda a transição do marketing tradicional para o digital, com ênfase em como a IA está transformando a relação marca-consumidor...' }
-    ]},
-    { id: 'm3', title: 'IA no Financeiro', icon: 'fas fa-dollar-sign', duration: '45min', contents: [
-        { id: 'c6', type: 'video', title: 'IA para Previsão Financeira', desc: 'Usando IA para gestão e análise financeira', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-        { id: 'c7', type: 'resumo', title: 'Princípios de Análise Financeira com IA', desc: 'Conceitos fundamentais', url: '', text: 'A análise financeira com IA permite identificar padrões, prever tendências e tomar decisões mais embasadas a partir de grandes volumes de dados...' }
-    ]},
-    { id: 'm4', title: 'IA para Gestão e Produtividade', icon: 'fas fa-cogs', duration: '1h 00min', contents: [
-        { id: 'c8', type: 'video', title: 'Automatizando Processos com IA', desc: 'Como automatizar tarefas repetitivas com IA', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-        { id: 'c9', type: 'ficha', title: 'Checklist: Ferramentas de Produtividade', desc: 'As melhores ferramentas de IA para produtividade', url: '', text: 'Notion AI — Gestão de conhecimento\nZapier — Automação de fluxos\nMake (Integromat) — Integrações\nMicrosoft Copilot — Produtividade Office\nClickUp AI — Gestão de projetos' }
-    ]},
-    { id: 'm5', title: 'Estratégia e Vantagem Competitiva com IA', icon: 'fas fa-chess', duration: '30min', contents: [
-        { id: 'c10', type: 'video', title: 'IA como Vantagem Competitiva', desc: 'Estratégias para se destacar usando IA', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-        { id: 'c11', type: 'ebook', title: 'Estratégia Competitiva na Era da IA', desc: 'E-book completo sobre estratégia com IA', url: '#', text: '' }
-    ]},
-    { id: 'm6', title: 'IA Avançada para Empreendedores', icon: 'fas fa-rocket', duration: '23min', contents: [
-        { id: 'c12', type: 'video', title: 'Casos de Uso Avançados de IA', desc: 'Exemplos reais de IA no empreendedorismo', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', text: '' },
-        { id: 'c13', type: 'quiz', title: 'Quiz Final: IA para Empreendedores', desc: 'Teste todos os seus conhecimentos', url: 'https://forms.google.com', text: '' }
-    ]}
+const DEFAULT_MODULES=[
+  {id:'m1',title:'Fundamentos de IA para Negócios',icon:'fas fa-lightbulb',duration:'1h 00min',contents:[
+    {id:'c1',type:'video',title:'O que é Inteligência Artificial?',desc:'Introdução aos conceitos de IA',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
+    {id:'c2',type:'ebook',title:'Guia Completo de IA para Empreendedores',desc:'E-book introdutório',url:'#',text:''},
+    {id:'c3',type:'resumo',title:'IA: Do Conceito à Prática',desc:'Resumo do livro referência',url:'',text:'A inteligência artificial está transformando todos os setores da economia. Este resumo apresenta os conceitos fundamentais e aplicações práticas para empreendedores que desejam se adaptar a essa nova realidade digital.'}
+  ]},
+  {id:'m2',title:'IA no Marketing e Vendas',icon:'fas fa-bullhorn',duration:'1h 30min',contents:[
+    {id:'c4',type:'video',title:'Marketing Digital com IA',desc:'Como usar IA para atrair clientes',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
+    {id:'c5',type:'ficha',title:'Checklist: IA no Marketing',desc:'Ferramentas e estratégias de IA para marketing',url:'',text:'ChatGPT — Criação de conteúdo\nMidjourney — Criação de imagens\nHubSpot AI — CRM inteligente\nCanva AI — Design automatizado\nJasper — Copywriting com IA'}
+  ]},
+  {id:'m3',title:'IA no Financeiro',icon:'fas fa-dollar-sign',duration:'45min',contents:[
+    {id:'c6',type:'video',title:'IA para Previsão Financeira',desc:'Usando IA para análise financeira',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
+    {id:'c7',type:'resumo',title:'Análise Financeira com IA',desc:'Conceitos fundamentais',url:'',text:'A análise financeira com IA permite identificar padrões, prever tendências e tomar decisões mais embasadas a partir de grandes volumes de dados financeiros.'}
+  ]},
+  {id:'m4',title:'IA para Gestão e Produtividade',icon:'fas fa-cogs',duration:'1h 00min',contents:[
+    {id:'c8',type:'video',title:'Automatizando Processos com IA',desc:'Como automatizar tarefas com IA',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
+    {id:'c9',type:'ficha',title:'Checklist: Ferramentas de Produtividade',desc:'As melhores ferramentas de IA para produtividade',url:'',text:'Notion AI — Gestão de conhecimento\nZapier — Automação de fluxos\nMake — Integrações\nMicrosoft Copilot — Produtividade Office\nClickUp AI — Gestão de projetos'}
+  ]},
+  {id:'m5',title:'Estratégia e Vantagem Competitiva com IA',icon:'fas fa-chess',duration:'30min',contents:[
+    {id:'c10',type:'video',title:'IA como Vantagem Competitiva',desc:'Estratégias para se destacar com IA',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
+    {id:'c11',type:'ebook',title:'Estratégia Competitiva na Era da IA',desc:'E-book completo sobre estratégia com IA',url:'#',text:''}
+  ]},
+  {id:'m6',title:'IA Avançada para Empreendedores',icon:'fas fa-rocket',duration:'23min',contents:[
+    {id:'c12',type:'video',title:'Casos de Uso Avançados de IA',desc:'Exemplos reais de IA no empreendedorismo',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
+    {id:'c13',type:'quiz',title:'Quiz Final: IA para Empreendedores',desc:'Teste todos os seus conhecimentos',url:'https://forms.google.com',text:''}
+  ]}
 ];
 
-// ==================== STATE ====================
-let currentUser = null;
-let modules = [];
-let progress = {};
-let currentModId = null;
-let currentConId = null;
+// ====== STATE ======
+let currentUser=null,modules=[],progress={},currentModId=null;
 
-function loadModules() {
-    const saved = localStorage.getItem('bicia_modules');
-    modules = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_MODULES));
+function loadData(){
+  const sm=localStorage.getItem('bicia_modules');
+  modules=sm?JSON.parse(sm):JSON.parse(JSON.stringify(DEFAULT_MODULES));
+  const sp=localStorage.getItem('bicia_progress');
+  progress=sp?JSON.parse(sp):{};
 }
-function saveModules() { localStorage.setItem('bicia_modules', JSON.stringify(modules)); }
-function loadProgress() {
-    const saved = localStorage.getItem('bicia_progress');
-    progress = saved ? JSON.parse(saved) : {};
+function saveModules(){localStorage.setItem('bicia_modules',JSON.stringify(modules));}
+function saveProgress(){localStorage.setItem('bicia_progress',JSON.stringify(progress));}
+function isDone(mid,cid){return !!(progress[mid]&&progress[mid][cid]);}
+function markDone(mid,cid){if(!progress[mid])progress[mid]={};progress[mid][cid]=true;saveProgress();}
+function getModPct(mid){
+  const m=modules.find(x=>x.id===mid);
+  if(!m||!m.contents.length)return{done:0,total:0,pct:0};
+  const done=m.contents.filter(c=>isDone(mid,c.id)).length;
+  return{done,total:m.contents.length,pct:Math.round(done/m.contents.length*100)};
 }
-function saveProgress() { localStorage.setItem('bicia_progress', JSON.stringify(progress)); }
-function isDone(modId, conId) { return !!(progress[modId] && progress[modId][conId]); }
-function markDone(modId, conId) {
-    if (!progress[modId]) progress[modId] = {};
-    progress[modId][conId] = true;
-    saveProgress();
+function getOverallPct(){
+  let t=0,d=0;
+  modules.forEach(m=>{const r=getModPct(m.id);t+=r.total;d+=r.done;});
+  return t?Math.round(d/t*100):0;
 }
-function getModPct(modId) {
-    const m = modules.find(m => m.id === modId);
-    if (!m || m.contents.length === 0) return { done: 0, total: 0, pct: 0 };
-    const done = m.contents.filter(c => isDone(modId, c.id)).length;
-    return { done, total: m.contents.length, pct: Math.round((done / m.contents.length) * 100) };
-}
-function getOverallPct() {
-    let total = 0, done = 0;
-    modules.forEach(m => { const r = getModPct(m.id); total += r.total; done += r.done; });
-    return total === 0 ? 0 : Math.round((done / total) * 100);
-}
-function uid(prefix) { return prefix + '_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); }
-function conIcon(type) {
-    return { video:'fas fa-play-circle', ebook:'fas fa-book-open', resumo:'fas fa-bookmark', ficha:'fas fa-sticky-note', quiz:'fas fa-question-circle' }[type] || 'fas fa-file';
-}
-function conIconClass(type) {
-    return { video:'video', ebook:'ebook', resumo:'text', ficha:'checklist', quiz:'quiz' }[type] || 'text';
-}
+function uid(p){return p+'_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);}
+function conIcon(type){return{video:'fas fa-play-circle',ebook:'fas fa-book-open',resumo:'fas fa-bookmark',ficha:'fas fa-sticky-note',quiz:'fas fa-question-circle'}[type]||'fas fa-file';}
+function conCls(type){return{video:'ci-video',ebook:'ci-ebook',resumo:'ci-resumo',ficha:'ci-ficha',quiz:'ci-quiz'}[type]||'ci-video';}
 
-// ==================== AUTH ====================
-function doLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('lEmail').value.trim();
-    const pass = document.getElementById('lPass').value;
-    const user = USERS.find(u => u.email === email && u.pass === pass);
-    if (!user) { document.getElementById('lError').style.display = 'block'; return; }
-    document.getElementById('lError').style.display = 'none';
-    currentUser = user;
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('appPage').style.display = 'block';
-    setupUI();
-    showSection('dashboard');
+// ====== AUTH ======
+function doLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('lEmail').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const user=USERS.find(u=>u.email===email&&u.pass===pass);
+  const err=document.getElementById('lErr');
+  if(!user){err.style.display='block';return;}
+  err.style.display='none';
+  currentUser=user;
+  loadData();
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appPage').style.display='block';
+  setupUI();
+  showSection('dashboard');
 }
 
-function doLogout() {
-    currentUser = null;
-    document.getElementById('appPage').style.display = 'none';
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('lEmail').value = '';
-    document.getElementById('lPass').value = '';
+function doLogout(){
+  currentUser=null;
+  document.getElementById('appPage').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('lEmail').value='';
+  document.getElementById('lPass').value='';
 }
 
-function setupUI() {
-    const initials = currentUser.name.charAt(0).toUpperCase();
-    document.getElementById('sideAvatar').textContent = initials;
-    document.getElementById('sideName').textContent = currentUser.name;
-    document.getElementById('sideRole').textContent = currentUser.role === 'admin' ? 'Administrador' : 'Aluno';
-    document.getElementById('welcomeName').textContent = currentUser.name;
-    document.getElementById('adminNav').style.display = currentUser.role === 'admin' ? 'block' : 'none';
-    updateBadges();
+function setupUI(){
+  document.getElementById('sideAvatar').textContent=currentUser.name.charAt(0).toUpperCase();
+  document.getElementById('sideName').textContent=currentUser.name;
+  document.getElementById('sideRole').textContent=currentUser.role==='admin'?'Administrador':'Aluno';
+  document.getElementById('welcomeName').textContent=currentUser.name;
+  document.getElementById('adminNav').style.display=currentUser.role==='admin'?'block':'none';
+  updateBadges();
 }
 
-function updateBadges() {
-    let videos=0, ebooks=0, resumos=0, fichas=0;
-    modules.forEach(m => m.contents.forEach(c => {
-        if (c.type==='video') videos++;
-        else if (c.type==='ebook') ebooks++;
-        else if (c.type==='resumo') resumos++;
-        else if (c.type==='ficha') fichas++;
-    }));
-    document.getElementById('badge-videoaulas').textContent = videos;
-    document.getElementById('badge-ebooks').textContent = ebooks;
-    document.getElementById('badge-resumos').textContent = resumos;
-    document.getElementById('badge-fichas').textContent = fichas;
+function updateBadges(){
+  let v=0,e=0,r=0,f=0;
+  modules.forEach(m=>m.contents.forEach(c=>{
+    if(c.type==='video')v++;
+    else if(c.type==='ebook')e++;
+    else if(c.type==='resumo')r++;
+    else if(c.type==='ficha')f++;
+  }));
+  document.getElementById('badge-videoaulas').textContent=v;
+  document.getElementById('badge-ebooks').textContent=e;
+  document.getElementById('badge-resumos').textContent=r;
+  document.getElementById('badge-fichas').textContent=f;
 }
 
-// ==================== NAVIGATION ====================
-function showSection(name) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const sec = document.getElementById('sec-' + name);
-    if (sec) sec.classList.add('active');
-    const nav = document.getElementById('nav-' + name);
-    if (nav) nav.classList.add('active');
-    const renders = { dashboard: renderDashboard, videoaulas: renderVideoaulas, ebooks: renderEbooks, resumos: renderResumos, fichas: renderFichas, todo: renderTodo, modulos: renderModulos, progresso: renderProgresso, admin: renderAdmin, contents: renderContents };
-    if (renders[name]) renders[name]();
+// ====== NAVEGAÇÃO ======
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const sec=document.getElementById('sec-'+name);
+  if(sec)sec.classList.add('active');
+  const nav=document.getElementById('nav-'+name);
+  if(nav)nav.classList.add('active');
+  const map={
+    dashboard:renderDashboard,
+    videoaulas:()=>renderByType('video','listVideoaulas'),
+    ebooks:()=>renderByType('ebook','listEbooks'),
+    resumos:()=>renderByType('resumo','listResumos'),
+    fichas:()=>renderByType('ficha','listFichas'),
+    todo:renderTodo,
+    modulos:renderModulos,
+    contents:renderContents,
+    progresso:renderProgresso,
+    admin:renderAdmin
+  };
+  if(map[name])map[name]();
 }
 
-// ==================== DASHBOARD ====================
-function renderDashboard() {
-    const pct = getOverallPct();
-    document.getElementById('dashProgBar').style.width = pct + '%';
-    document.getElementById('dashProgPct').textContent = pct + '%';
+// ====== DASHBOARD ======
+function renderDashboard(){
+  const pct=getOverallPct();
+  document.getElementById('dashProgBar').style.width=pct+'%';
+  document.getElementById('dashProgPct').textContent=pct+'%';
+  let v=0,f=0,done=0,total=0;
+  modules.forEach(m=>{
+    m.contents.forEach(c=>{if(c.type==='video')v++;if(c.type==='ficha')f++;});
+    const r=getModPct(m.id);done+=r.done;total+=r.total;
+  });
+  document.getElementById('metVideoaulas').textContent=v;
+  document.getElementById('metVideoBar').style.width=Math.min(v/10*100,100)+'%';
+  document.getElementById('metHoras').textContent=modules.length+'h';
+  document.getElementById('metSequencia').textContent=done;
+  document.getElementById('metSeqBar').style.width=(total?Math.round(done/total*100):0)+'%';
+  document.getElementById('metFichas').textContent=f;
+  document.getElementById('metFichasBar').style.width=Math.min(f/10*100,100)+'%';
+  document.getElementById('dashModSub').textContent=modules.length+' módulos disponíveis';
+  const list=document.getElementById('dashModList');list.innerHTML='';
+  modules.forEach((m,i)=>{
+    const{total:mt}=getModPct(m.id);
+    const div=document.createElement('div');div.className='mod-card';
+    div.innerHTML=`<div class="mod-num">${i+1}</div><div class="mod-info"><div class="mod-title">${m.title}</div><div class="mod-meta">${m.duration||'N/A'}</div></div><span class="mod-badge">${mt} itens</span>`;
+    div.onclick=()=>{currentModId=m.id;showSection('contents');};
+    list.appendChild(div);
+  });
+}
 
-    // Metrics
-    let videos=0, fichas=0;
-    modules.forEach(m => m.contents.forEach(c => { if(c.type==='video') videos++; if(c.type==='ficha') fichas++; }));
-    const overallDone = modules.reduce((acc,m) => acc + getModPct(m.id).done, 0);
-    const overallTotal = modules.reduce((acc,m) => acc + m.contents.length, 0);
-    document.getElementById('metVideoaulas').textContent = videos;
-    document.getElementById('metVideoBar').style.width = Math.min((videos/10)*100,100) + '%';
-    document.getElementById('metHoras').textContent = modules.length + 'h';
-    document.getElementById('metSequencia').textContent = overallDone;
-    document.getElementById('metSeqBar').style.width = overallTotal ? Math.round((overallDone/overallTotal)*100) + '%' : '0%';
-    document.getElementById('metFichas').textContent = fichas;
-    document.getElementById('metFichasBar').style.width = Math.min((fichas/10)*100,100) + '%';
+// ====== CONTEÚDO POR TIPO ======
+function renderByType(type,cid){
+  const c=document.getElementById(cid);c.innerHTML='';let found=false;
+  modules.forEach(m=>{
+    m.contents.filter(x=>x.type===type).forEach(x=>{
+      found=true;const d=isDone(m.id,x.id);
+      const div=document.createElement('div');div.className='con-card'+(d?' done':'');
+      div.innerHTML=`<div class="cicon ${conCls(x.type)}"><i class="${conIcon(x.type)}"></i></div><div class="con-info"><h6>${x.title}</h6><small>${m.title} — ${x.desc}</small></div><div class="chk ${d?'done':'pend'}"><i class="fas ${d?'fa-check-circle':'fa-circle'}"></i></div>`;
+      div.onclick=()=>openContent(m.id,x.id);c.appendChild(div);
+    });
+  });
+  if(!found)c.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>Nenhum conteúdo disponível.</div>';
+}
 
-    // Modules list
-    document.getElementById('dashModSub').textContent = `${modules.length} módulos — Carga Horária: ${modules.length}h`;
-    const list = document.getElementById('dashModList');
-    list.innerHTML = '';
-    modules.forEach((m, i) => {
-        const { pct: mp, total } = getModPct(m.id);
-        const div = document.createElement('div');
-        div.className = 'module-card';
-        div.innerHTML = `
-            <div class="mod-num">${i+1}</div>
-            <div class="mod-info">
-                <div class="mod-title">${m.title}</div>
-                <div class="mod-meta">${m.duration || 'N/A'}</div>
+function renderTodo(){
+  const c=document.getElementById('listTodo');c.innerHTML='';
+  modules.forEach(m=>m.contents.forEach(x=>{
+    const d=isDone(m.id,x.id);
+    const div=document.createElement('div');div.className='con-card'+(d?' done':'');
+    div.innerHTML=`<div class="cicon ${conCls(x.type)}"><i class="${conIcon(x.type)}"></i></div><div class="con-info"><h6>${x.title}</h6><small>${m.title} — ${x.desc}</small></div><div class="chk ${d?'done':'pend'}"><i class="fas ${d?'fa-check-circle':'fa-circle'}"></i></div>`;
+    div.onclick=()=>openContent(m.id,x.id);c.appendChild(div);
+  }));
+}
+
+// ====== MÓDULOS ======
+function renderModulos(){
+  document.getElementById('modulosSub').textContent=modules.length+' módulos disponíveis';
+  const list=document.getElementById('modulosList');list.innerHTML='';
+  modules.forEach((m,i)=>{
+    const{pct,total}=getModPct(m.id);
+    const div=document.createElement('div');div.className='mod-card';
+    div.innerHTML=`<div class="mod-num">${i+1}</div><div class="mod-info"><div class="mod-title">${m.title}</div><div class="mod-meta">${m.duration||'N/A'} — ${pct}% concluído</div></div><span class="mod-badge">${total} itens</span>`;
+    div.onclick=()=>{currentModId=m.id;showSection('contents');};
+    list.appendChild(div);
+  });
+}
+
+// ====== CONTEÚDOS DO MÓDULO ======
+function renderContents(){
+  const m=modules.find(x=>x.id===currentModId);if(!m)return;
+  document.getElementById('contentModTitle').textContent=m.title;
+  const{done,total,pct}=getModPct(m.id);
+  document.getElementById('contentModSub').textContent=`${done} de ${total} conteúdos concluídos — ${pct}%`;
+  const list=document.getElementById('contentsList');list.innerHTML='';
+  if(!m.contents.length){list.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>Nenhum conteúdo neste módulo.</div>';return;}
+  m.contents.forEach(c=>{
+    const d=isDone(m.id,c.id);
+    const div=document.createElement('div');div.className='con-card'+(d?' done':'');
+    div.innerHTML=`<div class="cicon ${conCls(c.type)}"><i class="${conIcon(c.type)}"></i></div><div class="con-info"><h6>${c.title}</h6><small>${c.desc}</small></div><div class="chk ${d?'done':'pend'}"><i class="fas ${d?'fa-check-circle':'fa-circle'}"></i></div>`;
+    div.onclick=()=>openContent(m.id,c.id);list.appendChild(div);
+  });
+}
+
+// ====== VISUALIZAR CONTEÚDO ======
+function openContent(mid,cid){
+  const m=modules.find(x=>x.id===mid);
+  const c=m?.contents.find(x=>x.id===cid);
+  if(!c)return;
+  document.getElementById('conModalTitle').textContent=c.title;
+  const body=document.getElementById('conModalBody');
+  if(c.type==='video'){
+    body.innerHTML=`<div class="ratio ratio-16x9 mb-3"><iframe src="${c.url}" frameborder="0" allowfullscreen></iframe></div><p class="text-muted">${c.desc}</p>`;
+  }else if(c.type==='ebook'||c.type==='quiz'){
+    const icon=c.type==='ebook'?'fa-book-open':'fa-question-circle';
+    const color=c.type==='ebook'?'#ea580c':'#9333ea';
+    body.innerHTML=`<div class="text-center p-4"><i class="fas ${icon}" style="font-size:3rem;color:${color};display:block;margin-bottom:1rem"></i><h5>${c.title}</h5><p class="text-muted mt-2">${c.desc}</p>${c.url&&c.url!=='#'?`<a href="${c.url}" target="_blank" style="display:inline-block;margin-top:1rem;padding:.6rem 1.5rem;background:#7c3aed;color:white;border-radius:10px;text-decoration:none;font-weight:600">Acessar</a>`:''}</div>`;
+  }else{
+    body.innerHTML=`<p class="text-muted mb-3">${c.desc}</p><div style="background:#f8faff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;white-space:pre-line;font-size:.9rem;color:#334155;line-height:1.7">${c.text||'Conteúdo não disponível.'}</div>`;
+  }
+  const btn=document.getElementById('markDoneBtn');
+  if(isDone(mid,cid)){
+    btn.textContent='✓ Concluído';btn.className='btn btn-success disabled';btn.onclick=null;
+  }else{
+    btn.textContent='Marcar como Concluído';btn.className='btn btn-success';
+    btn.onclick=()=>{markDone(mid,cid);btn.textContent='✓ Concluído';btn.className='btn btn-success disabled';btn.onclick=null;renderContents();renderDashboard();updateBadges();};
+  }
+  new bootstrap.Modal(document.getElementById('conModal')).show();
+}
+
+// ====== PROGRESSO ======
+function renderProgresso(){
+  const body=document.getElementById('progressoBody');
+  const overall=getOverallPct();
+  body.innerHTML=`<div class="pmc"><div class="pmh"><span class="pmt" style="font-size:1rem">Progresso Geral</span><span class="pmp" style="font-size:1rem">${overall}%</span></div><div class="pmb"><div class="pmbf" style="width:${overall}%"></div></div></div>`;
+  modules.forEach(m=>{
+    const{done,total,pct}=getModPct(m.id);
+    const div=document.createElement('div');div.className='pmc';
+    div.innerHTML=`<div class="pmh"><span class="pmt"><i class="${m.icon} me-2"></i>${m.title}</span><span class="pmp">${done}/${total} — ${pct}%</span></div><div class="pmb"><div class="pmbf" style="width:${pct}%"></div></div>${m.contents.map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f1f5f9"><div><i class="${conIcon(c.type)} me-2" style="color:#7c3aed"></i><span style="font-size:.85rem">${c.title}</span></div>${isDone(m.id,c.id)?'<i class="fas fa-check-circle" style="color:#16a34a"></i>':`<button style="background:#7c3aed;color:white;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.73rem;cursor:pointer" onclick="markDone('${m.id}','${c.id}');renderProgresso();renderDashboard()">Marcar</button>`}</div>`).join('')}`;
+    body.appendChild(div);
+  });
+}
+
+// ====== ADMIN ======
+function renderAdmin(){
+  const body=document.getElementById('adminBody');body.innerHTML='';
+  modules.forEach(m=>{
+    const card=document.createElement('div');card.className='amc';
+    card.innerHTML=`
+      <div class="amh">
+        <span><i class="${m.icon} me-2"></i>${m.title}</span>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn-edit" onclick="openModModal('${m.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn-del" onclick="deleteMod('${m.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="amb">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <strong style="color:#475569;font-size:.9rem">Conteúdos (${m.contents.length})</strong>
+          <button class="btn-add" onclick="openConModal('${m.id}',null)"><i class="fas fa-plus"></i> Adicionar</button>
+        </div>
+        ${m.contents.length===0?'<div class="empty"><i class="fas fa-inbox"></i>Nenhum conteúdo ainda.</div>':m.contents.map(c=>`
+          <div class="con-card" style="margin-bottom:.5rem">
+            <div class="cicon ${conCls(c.type)}"><i class="${conIcon(c.type)}"></i></div>
+            <div class="con-info"><h6>${c.title}</h6><small>${c.type} — ${c.desc}</small></div>
+            <div style="display:flex;gap:.4rem">
+              <button class="btn-edit" onclick="openConModal('${m.id}','${c.id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn-del" onclick="deleteCon('${m.id}','${c.id}')"><i class="fas fa-trash"></i></button>
             </div>
-            <span class="mod-items">${total} itens</span>
-        `;
-        div.onclick = () => { currentModId = m.id; showSection('contents'); };
-        list.appendChild(div);
-    });
+          </div>`).join('')}
+      </div>`;
+    body.appendChild(card);
+  });
 }
 
-// ==================== CONTENT TYPE LISTS ====================
-function renderByType(type, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    let found = false;
-    modules.forEach(m => {
-        m.contents.filter(c => c.type === type).forEach(c => {
-            found = true;
-            const done = isDone(m.id, c.id);
-            const div = document.createElement('div');
-            div.className = `content-card ${done ? 'done' : ''}`;
-            div.innerHTML = `
-                <div class="content-icon ${conIconClass(c.type)}"><i class="${conIcon(c.type)}"></i></div>
-                <div class="content-info"><h6>${c.title}</h6><small>${m.title} — ${c.desc}</small></div>
-                <div class="content-check ${done ? 'done' : 'pending'}"><i class="fas ${done ? 'fa-check-circle' : 'fa-circle'}"></i></div>
-            `;
-            div.onclick = () => { currentModId = m.id; openContent(m.id, c.id); };
-            container.appendChild(div);
-        });
-    });
-    if (!found) container.innerHTML = '<div style="background:white;border-radius:14px;padding:2rem;text-align:center;color:#94a3b8;"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:0.75rem;display:block;color:#e2e8f0;"></i>Nenhum conteúdo disponível.</div>';
+function openModModal(modId){
+  document.getElementById('modModalTitle').textContent=modId?'Editar Módulo':'Novo Módulo';
+  document.getElementById('modId').value=modId||'';
+  if(modId){
+    const m=modules.find(x=>x.id===modId);
+    document.getElementById('modTitle').value=m.title;
+    document.getElementById('modDuration').value=m.duration||'';
+    document.getElementById('modIcon').value=m.icon||'';
+  }else{
+    document.getElementById('modTitle').value='';
+    document.getElementById('modDuration').value='';
+    document.getElementById('modIcon').value='';
+  }
+  new bootstrap.Modal(document.getElementById('modModal')).show();
 }
-function renderVideoaulas() { renderByType('video', 'listVideoaulas'); }
-function renderEbooks() { renderByType('ebook', 'listEbooks'); }
-function renderResumos() { renderByType('resumo', 'listResumos'); }
-function renderFichas() { renderByType('ficha', 'listFichas'); }
-function renderTodo() {
-    const container = document.
+
+function saveModule(e){
+  e.preventDefault();
+  const id=document.getElementById('modId').value;
+  const title=document.getElementById('modTitle').value;
+  const duration=document.getElementById('modDuration').value;
+  const icon=document.getElementById('modIcon').value||'fas fa-book';
+  if(id){const m=modules.find(x=>x.id===id);m.title=title;m.duration=duration;m.icon=icon;}
+  else{modules.push({id:uid('mod'),title,duration,icon,contents:[]});}
+  saveModules();
+  bootstrap.Modal.getInstance(document.getElementById('modModal')).hide();
+  renderAdmin();updateBadges();
+}
+
+function deleteMod(modId){
+  if(confirm('Excluir este módulo e todos os seus conteúdos?')){
+    modules=modules.filter(x=>x.id!==modId);saveModules();renderAdmin();updateBadges();
+  }
+}
+
+function openConModal(modId,conId){
+  document.getElementById('conEditTitle').textContent=conId?'Editar Conteúdo':'Novo Conteúdo';
+  document.getElementById('ceModId').value=modId;
+  document.getElementById('ceId').value=conId||'';
+  if(conId){
+    const mod=modules.find(x=>x.id===modId);
+    const c=mod.contents.find(x=>x.id===conId);
+    document.getElementById('ceType').value=c.type;
+    document.getElementById('ceTitle').value=c.title;
+    document.getElementById('ceDesc').value=c.desc;
+    document.getElementById('ceUrl').value=c.url||'';
+    document.getElementById('ceText').value=c.text||'';
+    toggleCeFields();
+  }else{
+    document.getElementById('ceType').value='video';
+    document.getElementById('ceTitle').value='';
+    document.getElementById('ceDesc').value='';
+    document.getElementById('ceUrl').value='';
+    document.getElementById('ceText').value='';
+    toggleCeFields();
+  }
+  new bootstrap.Modal(document.getElementById('conEditModal')).show();
+}
+
+function toggleCeFields(){
+  const t=document.getElementById('ceType').value;
+  document.getElementById('ceUrlGroup').style.display=(t==='video'||t==='ebook'||t==='quiz')?'block':'none';
+  document.getElementById('ceTextGroup').style.display=(t==='resumo'||t==='ficha')?'block':'none';
+}
+
+function saveContent(e){
+  e.preventDefault();
+  const modId=document.getElementById('ceModId').value;
+  const conId=document.getElementById('ceId').value;
+  const mod=modules.find(x=>x.id===modId);
+  const obj={
+    id:conId||uid('con'),
+    type:document.getElementById('ceType').value,
+    title:document.getElementById('ceTitle').value,
+    desc:document.getElementById('ceDesc').value,
+    url:document.getElementById('ceUrl').value,
+    text:document.getElementById('ceText').value
+  };
+  if(conId){const idx=mod.contents.findIndex(x=>x.id===conId);mod.contents[idx]=obj;}
+  else{mod.contents.push(obj);}
+  saveModules();
+  bootstrap.Modal.getInstance(document.getElementById('conEditModal')).hide();
+  renderAdmin();updateBadges();
+}
+
+function deleteCon(modId,conId){
+  if(confirm('Excluir este conteúdo?')){
+    const mod=modules.find(x=>x.id===modId);
+    mod.contents=mod.contents.filter(x=>x.id!==conId);
+    saveModules();renderAdmin();updateBadges();
+  }
+}
+
+// ====== CHATBOT ======
+function toggleChat(){document.getElementById('cbBox').classList.toggle('open');}
+function sendChat(){
+  const inp=document.getElementById('cbInput');
+  const msg=inp.value.trim();
+if(!msg)return;
+  addCbMsg('user',msg);inp.value='';
+  setTimeout(()=>addCbMsg('bot',getBotReply(msg)),800);
+}
+function addCbMsg(s,t){
+  const msgs=document.getElementById('cbMsgs');
+  const div=document.createElement('div');div.className=`cb-msg ${s}`;
+  div.innerHTML=`<div class="cb-bubble">${t}</div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+function getBotReply(m){
+  m=m.toLowerCase();
+  if(m.includes('oi')||m.includes('olá'))return 'Olá! Como posso te ajudar hoje?';
+  if(m.includes('marketing'))return 'O módulo de Marketing com IA aborda criação de conteúdo, automação e estratégias digitais. Quer saber mais?';
+  if(m.includes('financeiro')||m.includes('finanças'))return 'No módulo Financeiro você aprende a usar IA para fluxo de caixa e previsões. Alguma dúvida específica?';
+  if(m.includes('gestão')||m.includes('produtividade'))return 'O módulo de Gestão ensina como automatizar processos e aumentar a eficiência com IA.';
+  if(m.includes('estratégia'))return 'No módulo de Estratégia exploramos como usar IA para decisões estratégicas e vantagem competitiva.';
+  if(m.includes('progresso'))return 'Acesse "Meu Progresso" no menu para ver seu avanço detalhado em cada módulo!';
+  if(m.includes('obrigad')||m.includes('valeu'))return 'De nada! Bons estudos! 🚀';
+  return 'Posso ajudar com dúvidas sobre Marketing, Financeiro, Gestão e Estratégia com IA. O que gostaria de saber?';
+}
+
+// ====== INIT ======
+document.addEventListener('DOMContentLoaded',()=>{
+  loadModules();loadProgress();
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('ap').style.display='none';
+});
+</script>
+</body>
+</html>
