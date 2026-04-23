@@ -816,10 +816,10 @@ function addCbMsg(s,t){
   msgs.scrollTop = msgs.scrollHeight; // Rola para a última mensagem
 }
 // ====== INIT ======
-document.addEventListener('DOMContentLoaded',()=>{
-  loadModules();loadProgress();
-  document.getElementById('loginPage').style.display='flex';
-  document.getElementById('ap').style.display='none';
+document.addEventListener('DOMContentLoaded',() => {
+  loadData(); // Esta função já carrega módulos e progresso
+  document.getElementById('loginPage').style.display='flex'; // Garante que a página de login aparece
+  document.getElementById('appPage').style.display='none'; // Garante que a página do app está escondida
 });
 </script>
 </body>
