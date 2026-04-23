@@ -17,7 +17,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
 .fl{display:block;font-weight:600;color:#374151;font-size:.85rem;margin-bottom:.4rem}
 .fc{width:100%;padding:.7rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;font-size:.9rem;outline:none;margin-bottom:1rem}
 .fc:focus{border-color:#7c3aed}
-.btn-login{width:100%;padding:.75rem;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:.5rem}
+.btn-login{width:100%;padding:.75rem;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:.5rem;transition:opacity .2s}
+.btn-login:hover{opacity:.9}
 .hint{background:#f8f9ff;border:1px solid #e0e7ff;border-radius:10px;padding:.75rem;font-size:.78rem;color:#64748b;margin-top:1rem;line-height:1.8}
 .err{color:#ef4444;font-size:.85rem;text-align:center;margin-top:.5rem;display:none}
 #appPage{display:none;min-height:100vh}
@@ -118,6 +119,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
 .cb-input:focus{border-color:#7c3aed}
 .cb-send{background:#7c3aed;color:white;border:none;border-radius:8px;padding:.5rem .85rem;cursor:pointer}
 .btn-purple{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border:none;border-radius:10px;padding:.65rem 1.4rem;font-size:.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+/* Toast Notification */
+.toast-notif{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);padding:.75rem 1.5rem;border-radius:10px;font-weight:600;font-size:.9rem;color:white;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast-notif.show{opacity:1}
 </style>
 </head>
 <body>
@@ -184,7 +188,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
         </button>
         <button class="ni" id="nav-fichas" onclick="showSection('fichas')">
           <span class="ni-icon"><i class="fas fa-sticky-note"></i></span>
-        <span class="ni-label">Flashcards</span>
+          <span class="ni-label">Flashcards</span>
           <span class="ni-badge" id="badge-fichas">0</span>
         </button>
         <button class="ni" id="nav-todo" onclick="showSection('todo')">
@@ -260,15 +264,15 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
 
       <!-- FICHAS -->
       <div class="section" id="sec-fichas">
-        <div class="sec-title">Fichas Resumo</div>
-        <div class="sec-sub">Checklists e fichas práticas</div>
+        <div class="sec-title">Flashcards</div>
+        <div class="sec-sub">Fichas de estudo rápido</div>
         <div class="con-list" id="listFichas"></div>
       </div>
 
       <!-- TODO -->
       <div class="section" id="sec-todo">
         <div class="sec-title">Todo o Conteúdo</div>
-        <div class="sec-sub">Todos os materiais disponíveis no curso</div>
+        <div class="sec-sub">Visão geral de todos os materiais</div>
         <div class="con-list" id="listTodo"></div>
       </div>
 
@@ -279,9 +283,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
         <div class="mod-list" id="modulosList"></div>
       </div>
 
-      <!-- CONTENTS -->
+      <!-- CONTEÚDOS DO MÓDULO -->
       <div class="section" id="sec-contents">
-        <button class="back-btn" onclick="history.go(-1) || showSection('modulos')"><i class="fas fa-arrow-left"></i> Voltar</button>
+        <button class="back-btn" onclick="showSection('modulos')"><i class="fas fa-arrow-left"></i> Voltar</button>
         <div class="sec-title" id="contentModTitle">Módulo</div>
         <div class="sec-sub" id="contentModSub"></div>
         <div class="con-list" id="contentsList"></div>
@@ -296,251 +300,338 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;min-height:100vh}
 
       <!-- ADMIN -->
       <div class="section" id="sec-admin">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-          <div><div class="sec-title">Painel Administrativo</div><div class="sec-sub">Gerencie módulos e conteúdos</div></div>
-          <button class="btn-add" onclick="openModModal(null)"><i class="fas fa-plus"></i> Novo Módulo</button>
-        </div>
+        <div class="sec-title">Painel Admin</div>
+        <div class="sec-sub">Gerencie módulos e conteúdos</div>
+        <button class="btn-purple mb-3" onclick="openModModal(null)"><i class="fas fa-plus"></i> Novo Módulo</button>
         <div id="adminBody"></div>
       </div>
 
-    </div>
+    </div><!-- /main-content -->
+  </div><!-- /app-wrap -->
+</div><!-- /appPage -->
+
+<!-- CHATBOT -->
+<button class="cb-btn" onclick="toggleChat()"><i class="fas fa-robot"></i></button>
+<div class="cb-box" id="cbBox">
+  <div class="cb-hdr">
+    <span><i class="fas fa-robot me-2"></i>Assistente BI com IA</span>
+    <button class="cb-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cb-msgs" id="cbMsgs">
+    <div class="cb-msg bot"><div class="cb-bubble">Olá! Sou seu assistente de BI com IA. Como posso ajudar?</div></div>
+  </div>
+  <div class="cb-foot">
+    <input class="cb-input" id="cbInput" placeholder="Digite sua pergunta..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button class="cb-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
   </div>
 </div>
 
 <!-- MODAL CONTEÚDO -->
 <div class="modal fade" id="conModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content" style="border-radius:16px;border:none">
-      <div class="modal-header" style="border-bottom:1px solid #f1f5f9">
-        <h5 class="modal-title" id="conModalTitle"></h5>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="conModalTitle">Conteúdo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="conModalBody"></div>
-      <div class="modal-footer" style="border-top:none">
+      <div class="modal-footer">
+        <button id="markDoneBtn" class="btn btn-success">Marcar como Concluído</button>
         <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button class="btn btn-success" id="markDoneBtn">Marcar como Concluído</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL MÓDULO ADMIN -->
+<!-- MODAL MÓDULO (ADMIN) -->
 <div class="modal fade" id="modModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius:16px;border:none">
-      <div class="modal-header"><h5 class="modal-title" id="modModalTitle">Módulo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modModalTitle">Módulo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
       <form onsubmit="saveModule(event)">
         <div class="modal-body">
           <input type="hidden" id="modId">
-          <div class="mb-3"><label class="fl">Título</label><input type="text" id="modTitle" class="fc" required></div>
-          <div class="mb-3"><label class="fl">Duração (ex: 1h 30min)</label><input type="text" id="modDuration" class="fc" placeholder="Ex: 1h 30min"></div>
-          <div class="mb-3"><label class="fl">Ícone Font Awesome</label><input type="text" id="modIcon" class="fc" placeholder="fas fa-book"></div>
+          <div class="mb-3">
+            <label class="fl">Título do Módulo</label>
+            <input type="text" id="modTitle" class="fc" required>
+          </div>
+          <div class="mb-3">
+            <label class="fl">Duração (ex: 2h30min)</label>
+            <input type="text" id="modDuration" class="fc">
+          </div>
+          <div class="mb-3">
+            <label class="fl">Ícone (classe Font Awesome, ex: fas fa-book)</label>
+            <input type="text" id="modIcon" class="fc" placeholder="fas fa-book">
+          </div>
         </div>
-        <div class="modal-footer" style="border-top:none"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn-purple">Salvar</button></div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- MODAL CONTEÚDO ADMIN -->
+<!-- MODAL CONTEÚDO (ADMIN) -->
 <div class="modal fade" id="conEditModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border-radius:16px;border:none">
-      <div class="modal-header"><h5 class="modal-title" id="conEditTitle">Conteúdo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="conEditTitle">Conteúdo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
       <form onsubmit="saveContent(event)">
         <div class="modal-body">
           <input type="hidden" id="ceModId">
           <input type="hidden" id="ceId">
-          <div class="mb-3"><label class="fl">Tipo</label>
+          <div class="mb-3">
+            <label class="fl">Tipo</label>
             <select id="ceType" class="fc" onchange="toggleCeFields()">
-              <option value="video">Vídeo</option>
+              <option value="video">Videoaula</option>
               <option value="ebook">E-book</option>
               <option value="resumo">Resumo de Livro</option>
-              <option value="ficha">Ficha Resumo</option>
+              <option value="ficha">Flashcard</option>
               <option value="quiz">Quiz</option>
             </select>
           </div>
-          <div class="mb-3"><label class="fl">Título</label><input type="text" id="ceTitle" class="fc" required></div>
-          <div class="mb-3"><label class="fl">Descrição</label><input type="text" id="ceDesc" class="fc"></div>
-          <div class="mb-3" id="ceUrlGroup"><label class="fl">URL</label><input type="text" id="ceUrl" class="fc" placeholder="https://..."></div>
-          <div class="mb-3" id="ceTextGroup" style="display:none"><label class="fl">Conteúdo</label><textarea id="ceText" class="fc" rows="5"></textarea></div>
+          <div class="mb-3">
+            <label class="fl">Título</label>
+            <input type="text" id="ceTitle" class="fc" required>
+          </div>
+          <div class="mb-3">
+            <label class="fl">Descrição</label>
+            <input type="text" id="ceDesc" class="fc">
+          </div>
+          <div class="mb-3" id="ceUrlGroup">
+            <label class="fl">URL</label>
+            <input type="text" id="ceUrl" class="fc" placeholder="https://...">
+          </div>
+          <div class="mb-3" id="ceTextGroup" style="display:none">
+            <label class="fl">Conteúdo / Texto</label>
+            <textarea id="ceText" class="fc" rows="5"></textarea>
+          </div>
         </div>
-        <div class="modal-footer" style="border-top:none"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn-purple">Salvar</button></div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- CHATBOT -->
-<button class="cb-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></button>
-<div class="cb-box" id="cbBox">
-  <div class="cb-hdr"><span><i class="fas fa-robot me-2"></i>Assistente IA</span><button class="cb-close" onclick="toggleChat()">×</button></div>
-  <div class="cb-msgs" id="cbMsgs">
-    <div class="cb-msg bot"><div class="cb-bubble">Olá! Sou seu assistente de aprendizado. Como posso ajudar?</div></div>
-  </div>
-  <div class="cb-foot">
-    <input class="cb-input" id="cbInput" placeholder="Digite sua dúvida..." onkeypress="if(event.key==='Enter')sendChat()">
-    <button class="cb-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
-  </div>
-</div>
+<!-- TOAST -->
+<div id="toastNotif" class="toast-notif"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ====== DADOS ======
-const USERS=[
-  {email:'aluno@bicia.com',pass:'123456',name:'Lucas',role:'aluno'},
-  {email:'admin@bicia.com',pass:'admin123',name:'Admin',role:'admin'}
+
+// ====== USUÁRIOS ======
+const USERS = [
+  {email:'aluno@bicia.com', pass:'123456', name:'Lucas', role:'aluno'},
+  {email:'admin@bicia.com', pass:'admin123', name:'Admin', role:'admin'}
 ];
 
-const DEFAULT_MODULES=[
-  {id:'m1',title:'Fundamentos de IA para Negócios',icon:'fas fa-lightbulb',duration:'1h 00min',contents:[
-    {id:'c1',type:'video',title:'O que é Inteligência Artificial?',desc:'Introdução aos conceitos de IA',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
-    {id:'c2',type:'ebook',title:'Guia Completo de IA para Empreendedores',desc:'E-book introdutório',url:'#',text:''},
-    {id:'c3',type:'resumo',title:'IA: Do Conceito à Prática',desc:'Resumo do livro referência',url:'',text:'A inteligência artificial está transformando todos os setores da economia. Este resumo apresenta os conceitos fundamentais e aplicações práticas para empreendedores que desejam se adaptar a essa nova realidade digital.'}
-  ]},
-  {id:'m2',title:'IA no Marketing e Vendas',icon:'fas fa-bullhorn',duration:'1h 30min',contents:[
-    {id:'c4',type:'video',title:'Marketing Digital com IA',desc:'Como usar IA para atrair clientes',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
-    {id:'c5',type:'ficha',title:'Checklist: IA no Marketing',desc:'Ferramentas e estratégias de IA para marketing',url:'',text:'ChatGPT — Criação de conteúdo\nMidjourney — Criação de imagens\nHubSpot AI — CRM inteligente\nCanva AI — Design automatizado\nJasper — Copywriting com IA'}
-  ]},
-  {id:'m3',title:'IA no Financeiro',icon:'fas fa-dollar-sign',duration:'45min',contents:[
-    {id:'c6',type:'video',title:'IA para Previsão Financeira',desc:'Usando IA para análise financeira',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
-    {id:'c7',type:'resumo',title:'Análise Financeira com IA',desc:'Conceitos fundamentais',url:'',text:'A análise financeira com IA permite identificar padrões, prever tendências e tomar decisões mais embasadas a partir de grandes volumes de dados financeiros.'}
-  ]},
-  {id:'m4',title:'IA para Gestão e Produtividade',icon:'fas fa-cogs',duration:'1h 00min',contents:[
-    {id:'c8',type:'video',title:'Automatizando Processos com IA',desc:'Como automatizar tarefas com IA',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
-    {id:'c9',type:'ficha',title:'Checklist: Ferramentas de Produtividade',desc:'As melhores ferramentas de IA para produtividade',url:'',text:'Notion AI — Gestão de conhecimento\nZapier — Automação de fluxos\nMake — Integrações\nMicrosoft Copilot — Produtividade Office\nClickUp AI — Gestão de projetos'}
-  ]},
-  {id:'m5',title:'Estratégia e Vantagem Competitiva com IA',icon:'fas fa-chess',duration:'30min',contents:[
-    {id:'c10',type:'video',title:'IA como Vantagem Competitiva',desc:'Estratégias para se destacar com IA',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
-    {id:'c11',type:'ebook',title:'Estratégia Competitiva na Era da IA',desc:'E-book completo sobre estratégia com IA',url:'#',text:''}
-  ]},
-  {id:'m6',title:'IA Avançada para Empreendedores',icon:'fas fa-rocket',duration:'23min',contents:[
-    {id:'c12',type:'video',title:'Casos de Uso Avançados de IA',desc:'Exemplos reais de IA no empreendedorismo',url:'https://www.youtube.com/embed/dQw4w9WgXcQ',text:''},
-    {id:'c13',type:'quiz',title:'Quiz Final: IA para Empreendedores',desc:'Teste todos os seus conhecimentos',url:'https://forms.google.com',text:''}
-  ]}
+// ====== MÓDULOS PADRÃO ======
+const DEFAULT_MODULES = [
+  {
+    id:'mod1', title:'Fundamentos de BI', duration:'3h', icon:'fas fa-database',
+    contents:[
+      {id:'c1', type:'video', title:'O que é Business Intelligence?', desc:'Introdução ao BI', url:'https://www.youtube.com/embed/dQw4w9WgXcQ'},
+      {id:'c2', type:'ebook', title:'Guia de BI para Iniciantes', desc:'Material completo em PDF', url:'#'},
+      {id:'c3', type:'ficha', title:'Conceitos-chave de BI', desc:'Flashcard de revisão', text:'BI = conjunto de estratégias e ferramentas para transformar dados brutos em informações úteis para tomada de decisão.'}
+    ]
+  },
+  {
+    id:'mod2', title:'Inteligência Artificial nos Negócios', duration:'4h', icon:'fas fa-brain',
+    contents:[
+      {id:'c4', type:'video', title:'IA para Empreendedores', desc:'Como usar IA no seu negócio', url:'https://www.youtube.com/embed/dQw4w9WgXcQ'},
+      {id:'c5', type:'resumo', title:'IA: O Futuro dos Negócios', desc:'Resumo do livro', text:'Principais aprendizados:\n1. IA automatiza tarefas repetitivas\n2. Dados são o novo petróleo\n3. Quem não adotar IA ficará para trás'},
+      {id:'c6', type:'quiz', title:'Quiz: IA nos Negócios', desc:'Teste seu conhecimento', url:'#'}
+    ]
+  }
 ];
 
 // ====== STATE ======
-let currentUser=null,modules=[],progress={},currentModId=null;
+let currentUser = null;
+let modules = [];
+let progress = {};
+let currentModId = null;
 
+// ====== STORAGE ======
 function loadData(){
-  const sm=localStorage.getItem('bicia_modules');
-  modules=sm?JSON.parse(sm):JSON.parse(JSON.stringify(DEFAULT_MODULES));
-  const sp=localStorage.getItem('bicia_progress');
-  progress=sp?JSON.parse(sp):{};
+  const saved = localStorage.getItem('bi_modules');
+  modules = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_MODULES));
+  const savedProg = localStorage.getItem('bi_progress');
+  progress = savedProg ? JSON.parse(savedProg) : {};
 }
-function saveModules(){localStorage.setItem('bicia_modules',JSON.stringify(modules));}
-function saveProgress(){localStorage.setItem('bicia_progress',JSON.stringify(progress));}
-function isDone(mid,cid){return !!(progress[mid]&&progress[mid][cid]);}
-function markDone(mid,cid){if(!progress[mid])progress[mid]={};progress[mid][cid]=true;saveProgress();}
-function getModPct(mid){
-  const m=modules.find(x=>x.id===mid);
-  if(!m||!m.contents.length)return{done:0,total:0,pct:0};
-  const done=m.contents.filter(c=>isDone(mid,c.id)).length;
-  return{done,total:m.contents.length,pct:Math.round(done/m.contents.length*100)};
+
+function saveModules(){
+  localStorage.setItem('bi_modules', JSON.stringify(modules));
 }
+
+function saveProgress(){
+  localStorage.setItem('bi_progress', JSON.stringify(progress));
+}
+
+// ====== HELPERS ======
+function uid(prefix){
+  return prefix + '_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+}
+
+function isDone(modId, conId){
+  return !!(progress[modId] && progress[modId][conId]);
+}
+
+function markDone(modId, conId){
+  if(!progress[modId]) progress[modId] = {};
+  progress[modId][conId] = true;
+  saveProgress();
+}
+
+function getModPct(modId){
+  const m = modules.find(x => x.id === modId);
+  if(!m || !m.contents.length) return {done:0, total:0, pct:0};
+  const total = m.contents.length;
+  const done = m.contents.filter(c => isDone(modId, c.id)).length;
+  return {done, total, pct: Math.round(done/total*100)};
+}
+
 function getOverallPct(){
-  let t=0,d=0;
-  modules.forEach(m=>{const r=getModPct(m.id);t+=r.total;d+=r.done;});
-  return t?Math.round(d/t*100):0;
+  let done = 0, total = 0;
+  modules.forEach(m => {
+    const r = getModPct(m.id);
+    done += r.done; total += r.total;
+  });
+  return total ? Math.round(done/total*100) : 0;
 }
-function uid(p){return p+'_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);}
-function conIcon(type){return{video:'fas fa-play-circle',ebook:'fas fa-book-open',resumo:'fas fa-bookmark',ficha:'fas fa-sticky-note',quiz:'fas fa-question-circle'}[type]||'fas fa-file';}
-function conCls(type){return{video:'ci-video',ebook:'ci-ebook',resumo:'ci-resumo',ficha:'ci-ficha',quiz:'ci-quiz'}[type]||'ci-video';}
+
+function conIcon(type){
+  const map = {video:'fas fa-play-circle', ebook:'fas fa-book-open', resumo:'fas fa-bookmark', ficha:'fas fa-sticky-note', quiz:'fas fa-question-circle'};
+  return map[type] || 'fas fa-file';
+}
+
+function conCls(type){
+  return 'ci-' + type;
+}
+
+// ====== TOAST ======
+function showToast(msg, type='success'){
+  const toast = document.getElementById('toastNotif');
+  toast.textContent = msg;
+  toast.style.background = type === 'success' ? '#16a34a' : '#ef4444';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
 
 // ====== AUTH ======
-function doLogin(e){
-  e.preventDefault();
-  const email=document.getElementById('lEmail').value.trim();
-  const pass=document.getElementById('lPass').value;
-  const user=USERS.find(u=>u.email===email&&u.pass===pass);
-  const err=document.getElementById('lErr');
-  if(!user){err.style.display='block';return;}
-  err.style.display='none';
-  currentUser=user;
-  loadData();
-  document.getElementById('loginPage').style.display='none';
-  document.getElementById('appPage').style.display='block';
+function showApp(){
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appPage').style.display = 'block';
   setupUI();
   showSection('dashboard');
 }
 
-function doLogout(){
-  currentUser=null;
-  document.getElementById('appPage').style.display='none';
-  document.getElementById('loginPage').style.display='flex';
-  document.getElementById('lEmail').value='';
-  document.getElementById('lPass').value='';
-}
-
 function setupUI(){
-  document.getElementById('sideAvatar').textContent=currentUser.name.charAt(0).toUpperCase();
-  document.getElementById('sideName').textContent=currentUser.name;
-  document.getElementById('sideRole').textContent=currentUser.role==='admin'?'Administrador':'Aluno';
-  document.getElementById('welcomeName').textContent=currentUser.name;
-  document.getElementById('adminNav').style.display=currentUser.role==='admin'?'block':'none';
+  if(!currentUser) return;
+  const name = currentUser.name;
+  const role = currentUser.role;
+  document.getElementById('sideAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('sideName').textContent = name;
+  document.getElementById('sideRole').textContent = role === 'admin' ? 'Administrador' : 'Aluno';
+  document.getElementById('welcomeName').textContent = name;
+  document.getElementById('adminNav').style.display = role === 'admin' ? 'block' : 'none';
   updateBadges();
 }
 
+function doLogin(e){
+  e.preventDefault();
+  const email = document.getElementById('lEmail').value.trim();
+  const pass = document.getElementById('lPass').value;
+  const user = USERS.find(u => u.email === email && u.pass === pass);
+  const err = document.getElementById('lErr');
+  if(!user){ err.style.display='block'; return; }
+  err.style.display = 'none';
+  currentUser = user;
+  localStorage.setItem('loggedUser', user.email);
+  localStorage.setItem('loggedRole', user.role);
+  showApp();
+}
+
+function doLogout(){
+  localStorage.removeItem('loggedUser');
+  localStorage.removeItem('loggedRole');
+  currentUser = null;
+  document.getElementById('appPage').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('lEmail').value = '';
+  document.getElementById('lPass').value = '';
+}
+
+// ====== BADGES ======
 function updateBadges(){
   let v=0,e=0,r=0,f=0;
-  modules.forEach(m=>m.contents.forEach(c=>{
+  modules.forEach(m => m.contents.forEach(c => {
     if(c.type==='video')v++;
     else if(c.type==='ebook')e++;
     else if(c.type==='resumo')r++;
     else if(c.type==='ficha')f++;
   }));
-  document.getElementById('badge-videoaulas').textContent=v;
-  document.getElementById('badge-ebooks').textContent=e;
-  document.getElementById('badge-resumos').textContent=r;
-  document.getElementById('badge-fichas').textContent=f;
+  document.getElementById('badge-videoaulas').textContent = v;
+  document.getElementById('badge-ebooks').textContent = e;
+  document.getElementById('badge-resumos').textContent = r;
+  document.getElementById('badge-fichas').textContent = f;
 }
 
 // ====== NAVEGAÇÃO ======
 function showSection(name){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
-  const sec=document.getElementById('sec-'+name);
-  if(sec)sec.classList.add('active');
-  const nav=document.getElementById('nav-'+name);
-  if(nav)nav.classList.add('active');
-  const map={
-    dashboard:renderDashboard,
-    videoaulas:()=>renderByType('video','listVideoaulas'),
-    ebooks:()=>renderByType('ebook','listEbooks'),
-    resumos:()=>renderByType('resumo','listResumos'),
-    fichas:()=>renderByType('ficha','listFichas'),
-    todo:renderTodo,
-    modulos:renderModulos,
-    contents:renderContents,
-    progresso:renderProgresso,
-    admin:renderAdmin
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('sec-'+name);
+  if(sec) sec.classList.add('active');
+  const nav = document.getElementById('nav-'+name);
+  if(nav) nav.classList.add('active');
+  const map = {
+    dashboard: renderDashboard,
+    videoaulas: () => renderByType('video','listVideoaulas'),
+    ebooks: () => renderByType('ebook','listEbooks'),
+    resumos: () => renderByType('resumo','listResumos'),
+    fichas: () => renderByType('ficha','listFichas'),
+    todo: renderTodo,
+    modulos: renderModulos,
+    contents: renderContents,
+    progresso: renderProgresso,
+    admin: renderAdmin
   };
-  if(map[name])map[name]();
+  if(map[name]) map[name]();
 }
 
 // ====== DASHBOARD ======
 function renderDashboard(){
-  const pct=getOverallPct();
-  document.getElementById('dashProgBar').style.width=pct+'%';
-  document.getElementById('dashProgPct').textContent=pct+'%';
+  const pct = getOverallPct();
+  document.getElementById('dashProgBar').style.width = pct+'%';
+  document.getElementById('dashProgPct').textContent = pct+'%';
   let v=0,f=0,done=0,total=0;
-  modules.forEach(m=>{
-    m.contents.forEach(c=>{if(c.type==='video')v++;if(c.type==='ficha')f++;});
-    const r=getModPct(m.id);done+=r.done;total+=r.total;
+  modules.forEach(m => {
+    m.contents.forEach(c => { if(c.type==='video')v++; if(c.type==='ficha')f++; });
+    const r = getModPct(m.id); done+=r.done; total+=r.total;
   });
-  document.getElementById('metVideoaulas').textContent=v;
-  document.getElementById('metVideoBar').style.width=Math.min(v/10*100,100)+'%';
-  document.getElementById('metHoras').textContent=modules.length+'h';
-  document.getElementById('metSequencia').textContent=done;
-  document.getElementById('metSeqBar').style.width=(total?Math.round(done/total*100):0)+'%';
-  document.getElementById('metFichas').textContent=f;
-  document.getElementById('metFichasBar').style.width=Math.min(f/10*100,100)+'%';
-  document.getElementById('dashModSub').textContent=modules.length+' módulos disponíveis';
-  const list=document.getElementById('dashModList');list.innerHTML='';
-  modules.forEach((m,i)=>{
-    const{total:mt}=getModPct(m.id);
-    const div=document.createElement('div');div.className='mod-card';
+  document.getElementById('metVideoaulas').textContent = v;
+  document.getElementById('metVideoBar').style.width = Math.min(v/10*100,100)+'%';
+  document.getElementById('metHoras').textContent = modules.length+'h';
+  document.getElementById('metSequencia').textContent = done;
+  document.getElementById('metSeqBar').style.width = (total?Math.round(done/total*100):0)+'%';
+  document.getElementById('metFichas').textContent = f;
+  document.getElementById('metFichasBar').style.width = Math.min(f/10*100,100)+'%';
+  document.getElementById('dashModSub').textContent = modules.length+' módulos disponíveis';
+  const list = document.getElementById('dashModList'); list.innerHTML='';
+  modules.forEach((m,i) => {
+    const{total:mt} = getModPct(m.id);
+    const div = document.createElement('div'); div.className='mod-card';
     div.innerHTML=`<div class="mod-num">${i+1}</div><div class="mod-info"><div class="mod-title">${m.title}</div><div class="mod-meta">${m.duration||'N/A'}</div></div><span class="mod-badge">${mt} itens</span>`;
     div.onclick=()=>{currentModId=m.id;showSection('contents');};
     list.appendChild(div);
@@ -549,35 +640,36 @@ function renderDashboard(){
 
 // ====== CONTEÚDO POR TIPO ======
 function renderByType(type,cid){
-  const c=document.getElementById(cid);c.innerHTML='';let found=false;
-  modules.forEach(m=>{
+  const c = document.getElementById(cid); c.innerHTML=''; let found=false;
+  modules.forEach(m => {
     m.contents.filter(x=>x.type===type).forEach(x=>{
-      found=true;const d=isDone(m.id,x.id);
-      const div=document.createElement('div');div.className='con-card'+(d?' done':'');
+      found=true;
+      const d=isDone(m.id,x.id);
+      const div=document.createElement('div'); div.className='con-card'+(d?' done':'');
       div.innerHTML=`<div class="cicon ${conCls(x.type)}"><i class="${conIcon(x.type)}"></i></div><div class="con-info"><h6>${x.title}</h6><small>${m.title} — ${x.desc}</small></div><div class="chk ${d?'done':'pend'}"><i class="fas ${d?'fa-check-circle':'fa-circle'}"></i></div>`;
-      div.onclick=()=>openContent(m.id,x.id);c.appendChild(div);
+      div.onclick=()=>openContent(m.id,x.id); c.appendChild(div);
     });
   });
-  if(!found)c.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>Nenhum conteúdo disponível.</div>';
+  if(!found) c.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>Nenhum conteúdo disponível.</div>';
 }
 
 function renderTodo(){
-  const c=document.getElementById('listTodo');c.innerHTML='';
+  const c=document.getElementById('listTodo'); c.innerHTML='';
   modules.forEach(m=>m.contents.forEach(x=>{
     const d=isDone(m.id,x.id);
-    const div=document.createElement('div');div.className='con-card'+(d?' done':'');
+    const div=document.createElement('div'); div.className='con-card'+(d?' done':'');
     div.innerHTML=`<div class="cicon ${conCls(x.type)}"><i class="${conIcon(x.type)}"></i></div><div class="con-info"><h6>${x.title}</h6><small>${m.title} — ${x.desc}</small></div><div class="chk ${d?'done':'pend'}"><i class="fas ${d?'fa-check-circle':'fa-circle'}"></i></div>`;
-    div.onclick=()=>openContent(m.id,x.id);c.appendChild(div);
+    div.onclick=()=>openContent(m.id,x.id); c.appendChild(div);
   }));
 }
 
 // ====== MÓDULOS ======
 function renderModulos(){
-  document.getElementById('modulosSub').textContent=modules.length+' módulos disponíveis';
-  const list=document.getElementById('modulosList');list.innerHTML='';
+  document.getElementById('modulosSub').textContent = modules.length+' módulos disponíveis';
+  const list=document.getElementById('modulosList'); list.innerHTML='';
   modules.forEach((m,i)=>{
     const{pct,total}=getModPct(m.id);
-    const div=document.createElement('div');div.className='mod-card';
+    const div=document.createElement('div'); div.className='mod-card';
     div.innerHTML=`<div class="mod-num">${i+1}</div><div class="mod-info"><div class="mod-title">${m.title}</div><div class="mod-meta">${m.duration||'N/A'} — ${pct}% concluído</div></div><span class="mod-badge">${total} itens</span>`;
     div.onclick=()=>{currentModId=m.id;showSection('contents');};
     list.appendChild(div);
@@ -586,17 +678,17 @@ function renderModulos(){
 
 // ====== CONTEÚDOS DO MÓDULO ======
 function renderContents(){
-  const m=modules.find(x=>x.id===currentModId);if(!m)return;
+  const m=modules.find(x=>x.id===currentModId); if(!m)return;
   document.getElementById('contentModTitle').textContent=m.title;
   const{done,total,pct}=getModPct(m.id);
   document.getElementById('contentModSub').textContent=`${done} de ${total} conteúdos concluídos — ${pct}%`;
-  const list=document.getElementById('contentsList');list.innerHTML='';
+  const list=document.getElementById('contentsList'); list.innerHTML='';
   if(!m.contents.length){list.innerHTML='<div class="empty"><i class="fas fa-inbox"></i>Nenhum conteúdo neste módulo.</div>';return;}
   m.contents.forEach(c=>{
     const d=isDone(m.id,c.id);
-    const div=document.createElement('div');div.className='con-card'+(d?' done':'');
+    const div=document.createElement('div'); div.className='con-card'+(d?' done':'');
     div.innerHTML=`<div class="cicon ${conCls(c.type)}"><i class="${conIcon(c.type)}"></i></div><div class="con-info"><h6>${c.title}</h6><small>${c.desc}</small></div><div class="chk ${d?'done':'pend'}"><i class="fas ${d?'fa-check-circle':'fa-circle'}"></i></div>`;
-    div.onclick=()=>openContent(m.id,c.id);list.appendChild(div);
+    div.onclick=()=>openContent(m.id,c.id); list.appendChild(div);
   });
 }
 
@@ -618,9 +710,9 @@ function openContent(mid,cid){
   }
   const btn=document.getElementById('markDoneBtn');
   if(isDone(mid,cid)){
-    btn.textContent='✓ Concluído';btn.className='btn btn-success disabled';btn.onclick=null;
+    btn.textContent='✓ Concluído'; btn.className='btn btn-success disabled'; btn.onclick=null;
   }else{
-    btn.textContent='Marcar como Concluído';btn.className='btn btn-success';
+    btn.textContent='Marcar como Concluído'; btn.className='btn btn-success';
     btn.onclick=()=>{markDone(mid,cid);btn.textContent='✓ Concluído';btn.className='btn btn-success disabled';btn.onclick=null;renderContents();renderDashboard();updateBadges();};
   }
   new bootstrap.Modal(document.getElementById('conModal')).show();
@@ -633,7 +725,7 @@ function renderProgresso(){
   body.innerHTML=`<div class="pmc"><div class="pmh"><span class="pmt" style="font-size:1rem">Progresso Geral</span><span class="pmp" style="font-size:1rem">${overall}%</span></div><div class="pmb"><div class="pmbf" style="width:${overall}%"></div></div></div>`;
   modules.forEach(m=>{
     const{done,total,pct}=getModPct(m.id);
-    const div=document.createElement('div');div.className='pmc';
+    const div=document.createElement('div'); div.className='pmc';
     div.innerHTML=`<div class="pmh"><span class="pmt"><i class="${m.icon} me-2"></i>${m.title}</span><span class="pmp">${done}/${total} — ${pct}%</span></div><div class="pmb"><div class="pmbf" style="width:${pct}%"></div></div>${m.contents.map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f1f5f9"><div><i class="${conIcon(c.type)} me-2" style="color:#7c3aed"></i><span style="font-size:.85rem">${c.title}</span></div>${isDone(m.id,c.id)?'<i class="fas fa-check-circle" style="color:#16a34a"></i>':`<button style="background:#7c3aed;color:white;border:none;border-radius:6px;padding:.2rem .6rem;font-size:.73rem;cursor:pointer" onclick="markDone('${m.id}','${c.id}');renderProgresso();renderDashboard()">Marcar</button>`}</div>`).join('')}`;
     body.appendChild(div);
   });
@@ -641,9 +733,9 @@ function renderProgresso(){
 
 // ====== ADMIN ======
 function renderAdmin(){
-  const body=document.getElementById('adminBody');body.innerHTML='';
+  const body=document.getElementById('adminBody'); body.innerHTML='';
   modules.forEach(m=>{
-    const card=document.createElement('div');card.className='amc';
+    const card=document.createElement('div'); card.className='amc';
     card.innerHTML=`
       <div class="amh">
         <span><i class="${m.icon} me-2"></i>${m.title}</span>
@@ -672,8 +764,8 @@ function renderAdmin(){
 }
 
 function openModModal(modId){
-  document.getElementById('modModalTitle').textContent=modId?'Editar Módulo':'Novo Módulo';
-  document.getElementById('modId').value=modId||'';
+  document.getElementById('modModalTitle').textContent = modId?'Editar Módulo':'Novo Módulo';
+  document.getElementById('modId').value = modId||'';
   if(modId){
     const m=modules.find(x=>x.id===modId);
     document.getElementById('modTitle').value=m.title;
@@ -697,12 +789,15 @@ function saveModule(e){
   else{modules.push({id:uid('mod'),title,duration,icon,contents:[]});}
   saveModules();
   bootstrap.Modal.getInstance(document.getElementById('modModal')).hide();
-  renderAdmin();updateBadges();
+  renderAdmin(); updateBadges();
+  showToast('Módulo salvo com sucesso!');
 }
 
 function deleteMod(modId){
   if(confirm('Excluir este módulo e todos os seus conteúdos?')){
-    modules=modules.filter(x=>x.id!==modId);saveModules();renderAdmin();updateBadges();
+    modules=modules.filter(x=>x.id!==modId);
+    saveModules(); renderAdmin(); updateBadges();
+    showToast('Módulo excluído.','error');
   }
 }
 
@@ -753,32 +848,45 @@ function saveContent(e){
   else{mod.contents.push(obj);}
   saveModules();
   bootstrap.Modal.getInstance(document.getElementById('conEditModal')).hide();
-  renderAdmin();updateBadges();
+  renderAdmin(); updateBadges();
+  showToast('Conteúdo salvo com sucesso!');
 }
 
 function deleteCon(modId,conId){
   if(confirm('Excluir este conteúdo?')){
     const mod=modules.find(x=>x.id===modId);
     mod.contents=mod.contents.filter(x=>x.id!==conId);
-    saveModules();renderAdmin();updateBadges();
+    saveModules(); renderAdmin(); updateBadges();
+    showToast('Conteúdo excluído.','error');
   }
 }
-  
+
 // ====== CHATBOT ======
-const GEMINI_KEY = 'AIzaSyA5GklVh8HqPvBuvDTy-CHRNBTxbDyJ6rA'; // <-- COLOQUE SUA CHAVE COMPLETA AQUI, ENTRE AS ASPAS!
+// ⚠️ IMPORTANTE: Gere uma nova chave em aistudio.google.com e cole abaixo
+const GEMINI_KEY = 'COLE_SUA_NOVA_CHAVE_AQUI';
 
 function toggleChat(){
   document.getElementById('cbBox').classList.toggle('open');
 }
 
+function addCbMsg(s, t){
+  const msgs=document.getElementById('cbMsgs');
+  const div=document.createElement('div');
+  div.className=`cb-msg ${s}`;
+  div.innerHTML=`<div class="cb-bubble">${t}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
 async function sendChat(){
-  const inp = document.getElementById('cbInput');
-  const msg = inp.value.trim();
+  const inp=document.getElementById('cbInput');
+  const msg=inp.value.trim();
   if(!msg) return;
   addCbMsg('user', msg);
-  inp.value = '';
-  addCbMsg('bot', '⏳ Digitando...'); // Mostra "Digitando..."
-  try {
+  inp.value='';
+  const loadingDiv=addCbMsg('bot','⏳ Digitando...');
+  try{
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
@@ -794,44 +902,90 @@ async function sendChat(){
       }
     );
     const data = await res.json();
-    // Extrai a resposta, com fallback caso não encontre
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Não consegui gerar uma resposta no momento. Tente novamente mais tarde.';
-    const msgs = document.getElementById('cbMsgs');
-    msgs.removeChild(msgs.lastChild); // Remove o "Digitando..."
-    addCbMsg('bot', reply); // Adiciona a resposta real
-  } catch(e) {
-    console.error('Erro ao conectar com a IA:', e); // Para depuração
-    const msgs = document.getElementById('cbMsgs');
-    msgs.removeChild(msgs.lastChild); // Remove o "Digitando..."
-    addCbMsg('bot', 'Erro ao conectar com a IA. Por favor, tente novamente.');
+    loadingDiv.remove();
+    if(!res.ok){
+      const errorMsg = data?.error?.message || `Erro ${res.status}`;
+      console.error('Erro da API Gemini:', data);
+      addCbMsg('bot', `⚠️ ${errorMsg}`);
+      return;
+    }
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Não consegui gerar uma resposta.';
+    addCbMsg('bot', reply);
+  } catch(e){
+    console.error('Erro ao conectar com a IA:', e);
+    loadingDiv.remove();
+    addCbMsg('bot', '❌ Erro de conexão. Verifique sua internet e tente novamente.');
   }
 }
 
-function addCbMsg(s,t){
-  const msgs = document.getElementById('cbMsgs');
-  const div = document.createElement('div');
-  div.className = `cb-msg ${s}`;
-  div.innerHTML = `<div class="cb-bubble">${t}</div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight; // Rola para a última mensagem
+// ====== TOAST ======
+function showToast(msg, type='success'){
+  let toast = document.getElementById('toastNotif');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'toastNotif';
+    toast.className = 'toast-notif';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.background = type === 'success' ? '#16a34a' : '#ef4444';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
 }
+
+// ====== AUTH ======
+function showApp(){
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appPage').style.display = 'block';
+  setupUI();
+  showSection('dashboard');
+}
+
+function doLogin(e){
+  e.preventDefault();
+  const email = document.getElementById('lEmail').value.trim();
+  const pass  = document.getElementById('lPass').value;
+  const user  = USERS.find(u => u.email === email && u.pass === pass);
+  const err   = document.getElementById('lErr');
+  if(!user){ err.style.display='block'; return; }
+  err.style.display = 'none';
+  currentUser = user;
+  localStorage.setItem('loggedUser', user.email);
+  localStorage.setItem('loggedRole', user.role);
+  showApp();
+}
+
+function doLogout(){
+  localStorage.removeItem('loggedUser');
+  localStorage.removeItem('loggedRole');
+  currentUser = null;
+  document.getElementById('appPage').style.display  = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('lEmail').value = '';
+  document.getElementById('lPass').value  = '';
+}
+
 // ====== INIT ======
-document.addEventListener('DOMContentLoaded',() => {
-  loadData(); // Carrega os dados iniciais (módulos, progresso, etc.)
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
 
-  // Verifica se há uma sessão de usuário salva no localStorage
-  const savedUser = localStorage.getItem('loggedUser');
-  const savedRole = localStorage.getItem('loggedRole');
+  const savedEmail = localStorage.getItem('loggedUser');
+  const savedRole  = localStorage.getItem('loggedRole');
 
-  if(savedUser && savedRole){
-    // Se houver uma sessão salva, restaura o usuário e o papel
-    currentUser = savedUser;
-    currentRole = savedRole;
-    showApp(); // Vai direto para a página principal do aplicativo
+  if(savedEmail && savedRole){
+    const user = USERS.find(u => u.email === savedEmail);
+    if(user){
+      currentUser = user;
+      showApp();
+    } else {
+      localStorage.removeItem('loggedUser');
+      localStorage.removeItem('loggedRole');
+      document.getElementById('loginPage').style.display = 'flex';
+      document.getElementById('appPage').style.display   = 'none';
+    }
   } else {
-    // Se não houver sessão salva, mostra a página de login
-    document.getElementById('loginPage').style.display='flex';
-    document.getElementById('appPage').style.display='none';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('appPage').style.display   = 'none';
   }
 });
 </script>
