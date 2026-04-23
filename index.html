@@ -817,9 +817,22 @@ function addCbMsg(s,t){
 }
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded',() => {
-  loadData(); // Esta função já carrega módulos e progresso
-  document.getElementById('loginPage').style.display='flex'; // Garante que a página de login aparece
-  document.getElementById('appPage').style.display='none'; // Garante que a página do app está escondida
+  loadData(); // Carrega os dados iniciais (módulos, progresso, etc.)
+
+  // Verifica se há uma sessão de usuário salva no localStorage
+  const savedUser = localStorage.getItem('loggedUser');
+  const savedRole = localStorage.getItem('loggedRole');
+
+  if(savedUser && savedRole){
+    // Se houver uma sessão salva, restaura o usuário e o papel
+    currentUser = savedUser;
+    currentRole = savedRole;
+    showApp(); // Vai direto para a página principal do aplicativo
+  } else {
+    // Se não houver sessão salva, mostra a página de login
+    document.getElementById('loginPage').style.display='flex';
+    document.getElementById('appPage').style.display='none';
+  }
 });
 </script>
 </body>
