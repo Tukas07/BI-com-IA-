@@ -763,9 +763,13 @@ function deleteCon(modId,conId){
     saveModules();renderAdmin();updateBadges();
   }
 }
-
+  
 // ====== CHATBOT ======
-const GEMINI_KEY = AIzaSyCYmSI7v9rgq3IuwmiCpEiuxS2O3bffYAA;
+const GEMINI_KEY = 'AIzaSyCYmSI7v9rgq3IuwmiCpEiuxS2O3bffYAA'; // <-- COLOQUE SUA CHAVE COMPLETA AQUI, ENTRE AS ASPAS!
+
+function toggleChat(){
+  document.getElementById('cbBox').classList.toggle('open');
+}
 
 async function sendChat(){
   const inp = document.getElementById('cbInput');
@@ -773,7 +777,7 @@ async function sendChat(){
   if(!msg) return;
   addCbMsg('user', msg);
   inp.value = '';
-  addCbMsg('bot', '⏳ Digitando...');
+  addCbMsg('bot', '⏳ Digitando...'); // Mostra "Digitando..."
   try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
@@ -790,15 +794,26 @@ async function sendChat(){
       }
     );
     const data = await res.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Não consegui gerar uma resposta.';
+    // Extrai a resposta, com fallback caso não encontre
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Não consegui gerar uma resposta no momento. Tente novamente mais tarde.';
     const msgs = document.getElementById('cbMsgs');
-    msgs.removeChild(msgs.lastChild);
-    addCbMsg('bot', reply);
+    msgs.removeChild(msgs.lastChild); // Remove o "Digitando..."
+    addCbMsg('bot', reply); // Adiciona a resposta real
   } catch(e) {
+    console.error('Erro ao conectar com a IA:', e); // Para depuração
     const msgs = document.getElementById('cbMsgs');
-    msgs.removeChild(msgs.lastChild);
-    addCbMsg('bot', 'Erro ao conectar. Tente novamente.');
+    msgs.removeChild(msgs.lastChild); // Remove o "Digitando..."
+    addCbMsg('bot', 'Erro ao conectar com a IA. Por favor, tente novamente.');
   }
+}
+
+function addCbMsg(s,t){
+  const msgs = document.getElementById('cbMsgs');
+  const div = document.createElement('div');
+  div.className = `cb-msg ${s}`;
+  div.innerHTML = `<div class="cb-bubble">${t}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight; // Rola para a última mensagem
 }
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded',()=>{
