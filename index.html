@@ -815,52 +815,21 @@ function addCbMsg(s,t){
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight; // Rola para a última mensagem
 }
-// ====== LOGIN / SESSÃO ======
-function doLogin(event){
-  event.preventDefault();
-  const u = document.getElementById('lEmail').value.trim();
-  const p = document.getElementById('lPass').value.trim();
-
-  if(USERS[u] && USERS[u].pass === p){
-    currentUser = u;
-    currentRole = USERS[u].role;
-
-    // Salva a sessão no localStorage
-    localStorage.setItem('loggedUser', u);
-    localStorage.setItem('loggedRole', USERS[u].role);
-
-    showApp();
-  } else {
-    document.getElementById('lErr').style.display='block';
-  }
-}
-
-function doLogout(){
-  // Limpa a sessão do localStorage
-  localStorage.removeItem('loggedUser');
-  localStorage.removeItem('loggedRole');
-
-  currentUser = '';
-  currentRole = '';
-  document.getElementById('appPage').style.display='none';
-  document.getElementById('loginPage').style.display='flex';
-}
-
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded',() => {
-  loadData();
+  loadData(); // Carrega os dados iniciais (módulos, progresso, etc.)
 
-  // Verifica se há uma sessão salva
+  // Verifica se há uma sessão de usuário salva no localStorage
   const savedUser = localStorage.getItem('loggedUser');
   const savedRole = localStorage.getItem('loggedRole');
 
   if(savedUser && savedRole){
-    // Sessão encontrada, restaura o usuário
+    // Se houver uma sessão salva, restaura o usuário e o papel
     currentUser = savedUser;
     currentRole = savedRole;
-    showApp();
+    showApp(); // Vai direto para a página principal do aplicativo
   } else {
-    // Nenhuma sessão, mostra o login
+    // Se não houver sessão salva, mostra a página de login
     document.getElementById('loginPage').style.display='flex';
     document.getElementById('appPage').style.display='none';
   }
@@ -868,3 +837,4 @@ document.addEventListener('DOMContentLoaded',() => {
 </script>
 </body>
 </html>
+
