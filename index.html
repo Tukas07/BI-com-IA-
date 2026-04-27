@@ -990,6 +990,74 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+      <!-- Chatbot Widget -->
+    <div id="chatbot-container" style="position:fixed; bottom:20px; right:20px; width:350px; z-index:9999;">
+      <div id="chatbot-box" style="background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.15); display:none; flex-direction:column; height:450px;">
+        <div style="background:#4A90D9; color:#fff; padding:15px; border-radius:12px 12px 0 0; font-weight:bold;">
+          🤖 Assistente do Ebook
+        </div>
+        <div id="chatbot-messages" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px;">
+        </div>
+        <div style="padding:10px; border-top:1px solid #eee; display:flex; gap:8px;">
+          <input id="chatbot-input" type="text" placeholder="Digite sua pergunta..." 
+            style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px; outline:none;"
+            onkeypress="if(event.key==='Enter') sendMessage()"/>
+          <button onclick="sendMessage()" 
+            style="background:#4A90D9; color:#fff; border:none; border-radius:8px; padding:8px 15px; cursor:pointer;">
+            Enviar
+          </button>
+        </div>
+      </div>
+      <button onclick="toggleChat()" 
+        style="background:#4A90D9; color:#fff; border:none; border-radius:50%; width:60px; height:60px; font-size:24px; cursor:pointer; float:right; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+        💬
+      </button>
+    </div>
+
+    <script>
+      const WEBHOOK_URL = "https://tukas.app.n8n.cloud/webhook/bi-chatbot";
+
+      // ⚠️ Substitua pelo contexto real do seu ebook
+      const CONTEXTO = "Você é um assistente especialista no conteúdo do ebook. Responda apenas perguntas relacionadas ao conteúdo do ebook.";
+
+      function toggleChat() {
+        const box = document.getElementById("chatbot-box");
+        box.style.display = box.style.display === "none" ? "flex" : "none";
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("chatbot-input");
+        const messages = document.getElementById("chatbot-messages");
+        const pergunta = input.value.trim();
+        if (!pergunta) return;
+
+        messages.innerHTML += `<div style="background:#e8f0fe; padding:10px; border-radius:8px; align-self:flex-end; max-width:80%;">${pergunta}</div>`;
+        input.value = "";
+        messages.scrollTop = messages.scrollHeight;
+
+        messages.innerHTML += `<div id="typing" style="background:#f0f0f0; padding:10px; border-radius:8px; align-self:flex-start; max-width:80%;">⏳ Digitando...</div>`;
+        messages.scrollTop = messages.scrollHeight;
+
+        try {
+          const response = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contexto: CONTEXTO, pergunta: pergunta })
+          });
+
+          const data = await response.json();
+          document.getElementById("typing").remove();
+
+          const aiResponse = data.ai_response || data.choices?.[0]?.message?.content || "Não consegui obter uma resposta.";
+          messages.innerHTML += `<div style="background:#f0f0f0; padding:10px; border-radius:8px; align-self:flex-start; max-width:80%;">${aiResponse}</div>`;
+          messages.scrollTop = messages.scrollHeight;
+
+        } catch (error) {
+          document.getElementById("typing").remove();
+          messages.innerHTML += `<div style="background:#ffe0e0; padding:10px; border-radius:8px; align-self:flex-start; max-width:80%;">❌ Erro ao conectar. Tente novamente.</div>`;
+        }
+      }
+    </script>
+
 </body>
 </html>
-
