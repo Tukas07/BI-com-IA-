@@ -889,7 +889,16 @@ async function sendChat(){
   try{
     const res = await fetch(
       // LINHA CORRIGIDA
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`
+async function sendChat(){
+  const inp=document.getElementById('cbInput');
+  const msg=inp.value.trim();
+  if(!msg) return;
+  addCbMsg('user', msg);
+  inp.value='';
+  const loadingDiv=addCbMsg('bot','⏳ Digitando...');
+  try{
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
